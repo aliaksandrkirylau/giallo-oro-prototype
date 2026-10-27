@@ -1,0 +1,930 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Giallo Oro Gioielli Shop</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@300;400;500;600;700&display=swap">
+<style>
+/* Layout: boutique-catalogue — sticky ivory header, editorial hero, filterable grid, product sheet, staff console. Single warm-light look by choice (matches the brand prototype). */
+:root{
+  --bg:#F9F7F3; --panel:#F2EEE7; --card:#FFFFFF; --ink:#1C1A17; --muted:#6F685E; --line:#E4DED3;
+  --gold:#A9824A; --gold-deep:#8A6633; --gold-soft:#EFE4D0;
+  --ok:#2F6B46; --ok-bg:#E6F1E9; --hold:#8E6414; --hold-bg:#F7EDD8; --view:#3B5878; --view-bg:#E5ECF4; --sold:#8A2F2F; --sold-bg:#F5E3E1;
+  --display:"Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --body:"Manrope", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --gut:max(16px, env(safe-area-inset-left, 0px));
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+input,select,textarea{font:inherit;color:var(--ink)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600}
+h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.08;margin:0;text-wrap:balance;letter-spacing:-.005em}
+.num{font-variant-numeric:tabular-nums}
+
+/* Header */
+header.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(249,247,243,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hbar{display:flex;align-items:center;gap:28px;height:76px}
+.logo{display:flex;flex-direction:column;text-decoration:none;flex-shrink:0}
+.logo b{font-family:var(--display);font-weight:500;font-size:28px;letter-spacing:.06em;line-height:1}
+.logo span{font-size:10.5px;letter-spacing:.28em;color:var(--muted);margin-top:5px}
+nav.main{display:flex;gap:26px;flex:1}
+nav.main a{text-decoration:none;font-size:14.5px;font-weight:500;padding:6px 0;border-bottom:1.5px solid transparent;white-space:nowrap}
+nav.main a.on{color:var(--gold-deep);border-color:var(--gold)}
+nav.main a:hover{color:var(--gold-deep)}
+.hact{display:flex;align-items:center;gap:12px}
+.lang{display:flex;border:1px solid var(--line);background:var(--panel);padding:3px}
+.lang button{font-size:12px;font-weight:700;padding:4px 8px;color:var(--muted)}
+.lang button.on{background:var(--ink);color:#fff}
+.iconbtn{position:relative;width:40px;height:40px;display:grid;place-items:center}
+.iconbtn svg{width:21px;height:21px}
+.dot{position:absolute;top:3px;right:3px;min-width:17px;height:17px;border-radius:9px;background:var(--gold);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;padding:0 4px}
+.acct{white-space:nowrap;display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);padding:9px 14px;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.bagbtn{white-space:nowrap;display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;padding:11px 16px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.bagbtn .cnt{background:var(--gold-soft);color:var(--ink);font-size:11px;padding:0 6px}
+.burger{display:none}
+.popover{position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--line);box-shadow:0 18px 40px -20px rgba(28,26,23,.35);width:340px;max-width:calc(100vw - 32px);z-index:70}
+.popover h4{margin:0;padding:14px 16px;border-bottom:1px solid var(--line);font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+.notif{padding:12px 16px;border-bottom:1px solid var(--line);font-size:13.5px}
+.notif small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+.notif.unread{background:#FBF6EC}
+.menu a,.menu button{display:block;width:100%;text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;font-size:14px}
+.menu a:hover,.menu button:hover{background:var(--panel)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:16px 26px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:1px solid var(--ink);transition:background .2s,color .2s}
+.btn.dark{background:var(--ink);color:#fff}
+.btn.dark:hover{background:#000}
+.btn.line{border-color:var(--gold);background:transparent}
+.btn.line:hover{background:var(--gold-soft)}
+.btn.sm{padding:10px 14px;font-size:11.5px;letter-spacing:.08em}
+.btn[disabled]{opacity:.38;cursor:not-allowed}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.warn{border-color:var(--sold);color:var(--sold)}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:1fr 1.05fr;gap:56px;align-items:center;padding-block:64px 56px}
+.hero h1{font-size:clamp(40px,5.2vw,68px);margin:22px 0 24px}
+.hero p.lead{font-size:19px;color:var(--muted);max-width:34em;margin:0 0 34px;font-weight:300}
+.hero .ctas{display:flex;gap:18px;flex-wrap:wrap}
+.stocknote{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
+.stocknote i{font-family:var(--display);font-size:16px;color:var(--gold);margin-right:10px}
+.slider{position:relative;aspect-ratio:1.24;overflow:hidden;background:#222;max-width:100%}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity .9s ease}
+.slide.on{opacity:1}
+.slide img{width:100%;height:100%;object-fit:cover;display:block}
+.slide::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(10,8,5,.72))}
+.slide .cap{position:absolute;left:30px;bottom:26px;z-index:2;color:#fff}
+.slide .cap b{display:block;font-family:var(--display);font-weight:500;font-size:25px}
+.slide .cap span{font-size:12px;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
+.sdots{position:absolute;right:24px;bottom:30px;z-index:3;display:flex;gap:8px}
+.sdots button{width:26px;height:2px;background:rgba(255,255,255,.45)}
+.sdots button.on{background:#fff}
+.snext{position:absolute;right:16px;top:50%;transform:translateY(-50%);z-index:3;width:46px;height:46px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center}
+.sprev{left:16px;right:auto}
+
+/* Trust strip */
+.trust{display:grid;grid-template-columns:repeat(4,1fr);border-block:1px solid var(--line);background:var(--panel)}
+.trust div{padding:22px 24px;border-right:1px solid var(--line)}
+.trust div:last-child{border-right:0}
+.trust b{display:block;font-family:var(--display);font-size:21px;font-weight:500}
+.trust span{font-size:13px;color:var(--muted)}
+
+/* Collection */
+.sec{padding-block:72px}
+.sechead{text-align:center;margin-bottom:38px}
+.sechead h2{font-size:clamp(34px,4vw,50px);margin:12px 0 10px}
+.sechead p{color:var(--muted);font-size:17px;margin:0;font-weight:300}
+.tabs{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:30px}
+.tabs button{padding:14px 20px;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:var(--ink);border-color:var(--gold);background:var(--panel)}
+.filters{background:var(--panel);border:1px solid var(--line);padding:22px 24px;display:grid;gap:18px;margin-bottom:34px}
+.frow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.field{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);padding:0 14px;height:48px;min-width:0}
+.field input,.field select{border:0;background:transparent;outline:0;width:100%;height:100%;font-size:14.5px;min-width:0}
+.avail{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px;font-size:14px;color:var(--muted)}
+.chip{border:1px solid var(--line);background:var(--card);padding:6px 14px;font-size:13.5px;color:var(--ink)}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.avail .found{margin-left:auto}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:34px 28px}
+.card{display:flex;flex-direction:column;text-decoration:none;cursor:pointer}
+.card .ph{position:relative;aspect-ratio:1/1.05;overflow:hidden;background:#1d1b18}
+.card .ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s ease}
+.card:hover .ph img{transform:scale(1.045)}
+.card.sold .ph img{filter:grayscale(.85) brightness(.85)}
+.badge-cert{position:absolute;left:16px;top:16px;background:rgba(20,18,15,.82);color:#fff;font-size:12.5px;font-weight:600;letter-spacing:.04em;padding:6px 10px;display:flex;gap:6px;align-items:center}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:5px 10px;white-space:nowrap}
+.status::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.s-available{color:var(--ok);background:var(--ok-bg)}
+.s-viewing{color:var(--view);background:var(--view-bg)}
+.s-payment{color:var(--hold);background:var(--hold-bg)}
+.s-sold{color:var(--sold);background:var(--sold-bg)}
+.card .ph .status{position:absolute;right:16px;top:16px;background:#fff}
+.card .meta{padding:18px 2px 0;display:grid;gap:4px}
+.card .meta small{font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.card .meta h3{font-size:24px}
+.card .meta .spec{font-size:13.5px;color:var(--muted)}
+.card .meta .price{font-size:16px;font-weight:600;margin-top:6px}
+.empty{grid-column:1/-1;text-align:center;padding:60px 0;color:var(--muted)}
+
+/* Steps */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);background:var(--card)}
+.steps div{padding:28px 26px;border-right:1px solid var(--line)}
+.steps div:last-child{border-right:0}
+.steps em{font-family:var(--display);font-style:italic;font-size:30px;color:var(--gold)}
+.steps b{display:block;font-size:15px;margin:8px 0 6px}
+.steps p{margin:0;font-size:13.5px;color:var(--muted)}
+
+/* Split feature */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.split img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.split h2{font-size:clamp(32px,3.6vw,46px);margin:14px 0 18px}
+.split p{color:var(--muted);font-size:16px;margin:0 0 14px;max-width:34em}
+
+/* Product page */
+.crumbs{font-size:13px;color:var(--muted);padding-block:26px 8px}
+.crumbs a{text-decoration:none}
+.crumbs a:hover{color:var(--gold-deep)}
+.pdp{display:grid;grid-template-columns:1.1fr 1fr;gap:56px;padding-bottom:64px}
+.gal{display:grid;grid-template-columns:84px 1fr;gap:14px;align-self:start;position:sticky;top:96px}
+.thumbs{display:grid;gap:10px;align-content:start}
+.thumbs button{aspect-ratio:1;overflow:hidden;border:1px solid var(--line);padding:0;background:#1d1b18;position:relative}
+.thumbs button.on{outline:2px solid var(--gold);outline-offset:1px}
+.thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.thumbs .zoomthumb img{transform:scale(2.1)}
+.thumbs .certthumb{background:var(--gold-soft);display:grid;place-items:center;font-family:var(--display);font-size:13px;line-height:1.1;text-align:center;color:var(--gold-deep)}
+.stage{position:relative;aspect-ratio:1;overflow:hidden;background:#1d1b18;cursor:zoom-in;max-width:100%}
+.stage img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s ease}
+.stage.zoom img{transform:scale(2.2)}
+.stage .hint{position:absolute;left:14px;bottom:14px;background:rgba(255,255,255,.92);font-size:12px;padding:6px 10px;display:flex;gap:6px;align-items:center}
+.stage.cert{cursor:default;background:var(--panel)}
+.info h1{font-size:clamp(36px,4vw,52px);margin:12px 0 10px}
+.info .price{font-size:26px;font-weight:600;margin:6px 0 18px}
+.info .price small{font-size:13px;color:var(--muted);font-weight:400;margin-left:8px}
+.statusbox{border:1px solid var(--line);background:var(--card);padding:16px 18px;display:flex;gap:14px;align-items:flex-start;margin-bottom:22px}
+.statusbox p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+.info .desc{font-size:16px;color:#3f3a33;margin:0 0 26px}
+.buy{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.unique{font-size:13px;color:var(--muted);margin:0 0 30px}
+.attrs{width:100%;border-collapse:collapse;margin-bottom:28px;font-size:14px}
+.attrs th{text-align:left;font-weight:500;color:var(--muted);padding:11px 0;border-bottom:1px solid var(--line);width:42%}
+.attrs td{padding:11px 0;border-bottom:1px solid var(--line);font-weight:500}
+.certcard{display:flex;gap:18px;align-items:center;border:1px solid var(--gold);background:#FCF8F0;padding:18px;margin-bottom:22px}
+.seal{width:58px;height:58px;border-radius:50%;border:1.5px solid var(--gold);display:grid;place-items:center;font-family:var(--display);font-size:13px;color:var(--gold-deep);flex-shrink:0;text-align:center;line-height:1}
+.certcard div{flex:1;min-width:0}
+.certcard b{display:block;font-size:14.5px}
+.certcard span{font-size:13px;color:var(--muted)}
+details.acc{border-top:1px solid var(--line)}
+details.acc:last-of-type{border-bottom:1px solid var(--line)}
+details.acc summary{padding:16px 0;cursor:pointer;font-weight:600;font-size:14px;letter-spacing:.06em;text-transform:uppercase;list-style:none;display:flex;justify-content:space-between}
+details.acc summary::after{content:"+";color:var(--gold);font-size:18px}
+details.acc[open] summary::after{content:"–"}
+details.acc p{margin:0 0 16px;color:var(--muted);font-size:14px}
+
+/* Certificate doc */
+.certdoc{background:#FFFDF8;border:1px solid #D9C7A4;outline:6px double #E6D7B9;outline-offset:-14px;padding:42px 44px;font-size:13.5px;position:relative;width:100%;height:100%;overflow:auto}
+.certdoc h3{font-size:30px;text-align:center}
+.certdoc .sub{text-align:center;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-deep);margin:6px 0 22px}
+.certdoc dl{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;margin:0}
+.certdoc dt{color:var(--muted)}
+.certdoc dd{margin:0;font-weight:600}
+.certdoc .sign{display:flex;justify-content:space-between;align-items:flex-end;margin-top:26px;gap:16px}
+.certdoc .sign i{font-family:var(--display);font-size:22px;border-bottom:1px solid var(--ink);padding:0 16px 2px}
+
+/* Drawer + modal */
+.scrim{position:fixed;inset:0;background:rgba(20,18,15,.45);z-index:80;display:flex;justify-content:flex-end}
+.scrim.center{justify-content:center;align-items:center;padding:16px}
+.drawer{width:min(460px,100vw);height:100%;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.dhead{display:flex;justify-content:space-between;align-items:center;padding:22px 24px;border-bottom:1px solid var(--line)}
+.dhead h3{font-size:28px}
+.dbody{flex:1;overflow:auto;padding:20px 24px;display:grid;gap:18px;align-content:start}
+.dfoot{border-top:1px solid var(--line);padding:20px 24px;display:grid;gap:12px;background:var(--card)}
+.line-item{display:grid;grid-template-columns:76px 1fr auto;gap:14px;align-items:center}
+.line-item img{width:76px;height:76px;object-fit:cover}
+.line-item b{font-family:var(--display);font-size:20px;font-weight:500;display:block;line-height:1.1}
+.line-item small{color:var(--muted);font-size:12.5px}
+.opt{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);background:var(--card);padding:14px 16px;cursor:pointer}
+.opt:has(input:checked){border-color:var(--gold);background:#FCF8F0}
+.opt input{accent-color:var(--gold);margin-top:4px}
+.opt span{flex:1;font-size:14px}
+.opt small{display:block;color:var(--muted);font-size:12.5px}
+.tot{display:flex;justify-content:space-between;font-size:14px}
+.tot.big{font-size:18px;font-weight:700}
+.modal{background:var(--bg);width:min(560px,100%);max-height:calc(100vh - 32px);overflow:auto;position:relative}
+.modal.wide{width:min(720px,100%)}
+.mbody{padding:30px 32px;display:grid;gap:16px}
+.mbody h3{font-size:32px}
+.mbody p{margin:0;color:var(--muted)}
+.close{position:absolute;right:12px;top:12px;width:40px;height:40px;display:grid;place-items:center;font-size:22px}
+.fgrid{display:grid;gap:12px}
+.fgrid label{display:grid;gap:6px;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fgrid input,.fgrid textarea{border:1px solid var(--line);background:var(--card);padding:12px 14px;font-size:15px;text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink)}
+.bank{border:1px dashed var(--gold);background:#FCF8F0;padding:16px 18px;display:grid;gap:8px;font-size:14px}
+.bank div{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.bank span{color:var(--muted)}
+.bank b{font-variant-numeric:tabular-nums;word-break:break-all}
+.notice{font-size:13px;background:var(--panel);padding:12px 14px;color:var(--muted)}
+.countdown{font-variant-numeric:tabular-nums;font-weight:700}
+
+/* Pages */
+.pagehead{padding-block:64px 36px;text-align:center}
+.pagehead h1{font-size:clamp(40px,5vw,60px);margin:14px 0 12px}
+.pagehead p{color:var(--muted);font-size:17px;max-width:40em;margin:0 auto}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:40px}
+.facts div{border-top:1px solid var(--gold);padding-top:16px}
+.facts b{font-family:var(--display);font-size:22px;font-weight:500;display:block;margin-bottom:6px}
+.facts p{margin:0;color:var(--muted);font-size:14.5px}
+
+/* Account */
+.acgrid{display:grid;grid-template-columns:280px 1fr;gap:40px;padding-bottom:70px}
+.box{background:var(--card);border:1px solid var(--line);padding:22px}
+.box h3{font-size:26px;margin-bottom:6px}
+.rec{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
+.rec:last-child{border-bottom:0}
+.rec img{width:72px;height:72px;object-fit:cover}
+.rec b{display:block;font-size:15px}
+.rec small{color:var(--muted);font-size:12.5px;display:block}
+
+/* Staff */
+.staffbar{background:var(--ink);color:#EDE6D8}
+.staffbar .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-block:12px;font-size:13px}
+.staffbar b{color:#fff;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+.staffbar .sp{flex:1}
+.staffbar button{border:1px solid rgba(255,255,255,.3);padding:7px 12px;font-size:12px;color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:28px 0}
+.kpi{background:var(--card);border:1px solid var(--line);padding:18px 20px;display:grid;gap:4px}
+.kpi span{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.kpi b{font-family:var(--display);font-size:40px;font-weight:500;line-height:1}
+.kpi.c-ok b{color:var(--ok)}.kpi.c-view b{color:var(--view)}.kpi.c-hold b{color:var(--hold)}.kpi.c-sold b{color:var(--sold)}
+.stabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:20px;overflow-x:auto}
+.stabs button{padding:12px 16px;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.stabs button.on{color:var(--ink);border-color:var(--gold)}
+.stabs .n{background:var(--gold);color:#fff;font-size:10.5px;padding:1px 6px;margin-left:6px}
+.inv{display:grid;gap:10px;padding-bottom:70px}
+.irow{display:grid;grid-template-columns:64px minmax(0,2fr) 110px 200px 340px;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);padding:12px 16px}
+.irow img{width:64px;height:64px;object-fit:cover}
+.irow b{display:block;font-size:15px}
+.irow small{color:var(--muted);font-size:12.5px;display:block}
+.irow .acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.confirm{grid-column:1/-1;background:var(--hold-bg);padding:12px 14px;font-size:13.5px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.log{font-size:13.5px}
+.log div{padding:10px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:150px 1fr;gap:14px}
+.log span{color:var(--muted)}
+.stafflogin{max-width:460px;margin:70px auto;text-align:center}
+.stafflogin .box{display:grid;gap:14px;text-align:left}
+
+footer{background:var(--ink);color:#CFC6B6;margin-top:40px}
+footer .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px;padding-block:52px 40px}
+footer b{color:#fff;display:block;margin-bottom:10px;font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+footer p,footer a{font-size:13.5px;margin:0 0 6px;display:block;text-decoration:none}
+footer .logo b{color:#fff;font-size:24px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:14px 20px;font-size:14px;z-index:90;max-width:calc(100vw - 32px);box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}
+.demo-tag{position:fixed;left:max(12px, env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:40;background:var(--card);border:1px solid var(--line);font-size:11.5px;padding:6px 10px;color:var(--muted)}
+
+@media (max-width:1320px){ .bagbtn .lbl{display:none} nav.main{gap:20px} .hbar{gap:22px} }
+@media (max-width:1100px){
+  nav.main{gap:16px}
+  .acct .nm{display:none}
+}
+.mobonly{display:none!important}
+@media (max-width:960px){
+  nav.main{display:none}
+  nav.main.open{display:flex;flex-direction:column;position:absolute;left:0;right:0;top:76px;background:var(--bg);border-bottom:1px solid var(--line);padding:8px max(16px, env(safe-area-inset-right,0px)) 16px max(16px, env(safe-area-inset-left,0px));gap:0}
+  nav.main.open a{padding:14px 0;border-bottom:1px solid var(--line)}
+  .burger{display:grid}
+  .hero,.split,.pdp{grid-template-columns:1fr;gap:32px}
+  .gal{position:static}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .frow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .trust,.steps,.kpis{grid-template-columns:repeat(2,1fr)}
+  .trust div:nth-child(2),.steps div:nth-child(2){border-right:0}
+  .trust div:nth-child(-n+2),.steps div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .acgrid{grid-template-columns:1fr}
+  .irow{grid-template-columns:56px minmax(0,1fr)}
+  .irow img{width:56px;height:56px}
+  .irow .c3,.irow .c4{display:none}
+  .irow .acts{grid-column:1/-1;justify-content:flex-start}
+  footer .wrap{grid-template-columns:1fr 1fr}
+  .facts{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  .hbar{height:64px;gap:10px}
+  nav.main.open{top:64px}
+  .logo{min-width:0;flex:1}
+  .logo b{font-size:16px;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .logo span{font-size:8.5px;letter-spacing:.2em}
+  .hact{gap:4px}
+  .bagbtn{padding:10px}
+  .lang,.acct,.demo-tag{display:none}
+  nav.main.open .mobonly{display:block!important}
+  .bagbtn{padding:10px 12px}
+  .bagbtn .lbl{display:none}
+  .grid{grid-template-columns:1fr}
+  .frow{grid-template-columns:1fr}
+  .buy{grid-template-columns:1fr}
+  .gal{grid-template-columns:1fr}
+  .thumbs{grid-template-columns:repeat(4,1fr);order:2}
+  .hero{padding-block:32px}
+  .tabs{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto}
+  .tabs button{white-space:nowrap;padding:12px 14px}
+  .mbody{padding:26px 20px}
+  .certdoc{padding:30px 24px}
+  .log div{grid-template-columns:1fr;gap:2px}
+  footer .wrap{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap hbar">
+    <button class="iconbtn burger" id="burger" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <a class="logo" href="#home"><b>GIALLO ORO GIOIELLI</b><span>MILANO · DAL 1984</span></a>
+    <nav class="main" id="nav"></nav>
+    <div class="hact">
+      <div class="lang" id="lang"><button data-l="it">IT</button><button data-l="en">EN</button></div>
+      <div style="position:relative"><button class="iconbtn" id="bell" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="dot" id="belldot" hidden></span></button><div id="bellpop"></div></div>
+      <div style="position:relative"><button class="acct" id="acct"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span class="nm" id="acctname"></span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div id="acctpop"></div></div>
+      <button class="bagbtn" id="bagbtn"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 8h14l-1 13H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="lbl" data-t="bag"></span><span class="cnt" id="bagcnt">0</span></button>
+    </div>
+  </div>
+</header>
+<main id="app"></main>
+<footer>
+  <div class="wrap">
+    <div><a class="logo" href="#home"><b>GIALLO ORO GIOIELLI</b></a><p style="margin-top:14px" data-t="footAbout"></p></div>
+    <div><b data-t="fShop"></b><a href="#home" data-go="collection" data-t="navCollection"></a><a href="#authenticity" data-t="navAuth"></a><a href="#account" data-t="myAccount"></a></div>
+    <div><b data-t="fBoutique"></b><p>Via della Spiga 00, Milano</p><p data-t="hours"></p><p>+39 02 0000 0000</p></div>
+    <div><b data-t="fPay"></b><p data-t="fPay1"></p><p data-t="fPay2"></p><p data-t="fPay3"></p></div>
+  </div>
+</footer>
+<div class="demo-tag" data-t="demoTag"></div>
+<div id="layer"></div>
+
+<script>
+(function(){
+"use strict";
+const IMG = n => "img/" + n + ".jpg";
+const CATS = ["rings","necklaces","bracelets","earrings","watches","brooches"];
+const METALS = {yg:{en:"18kt yellow gold",it:"Oro giallo 18kt"},wg:{en:"18kt white gold",it:"Oro bianco 18kt"},rg:{en:"18kt rose gold",it:"Oro rosa 18kt"},pt:{en:"Platinum 950",it:"Platino 950"},tt:{en:"Two-tone gold",it:"Oro bicolore"}};
+// [id, img, cat, name, metal, stone EN, stone IT, carat, era, size, weight g, condition, price, cert, desc EN, desc IT, daysAgo]
+const RAW = [
+ [1,"u1","rings","Anello Rosetta Fiorentina","yg","Champagne diamonds","Diamanti champagne","1.20 ct","c. 1970","IT 14","6.8","Excellent",3950,133,"A domed rosette of champagne diamonds on a Florentine-finished yellow gold band. Resized once, hallmarks intact.","Rosetta bombata di diamanti champagne su fascia in oro giallo con finitura fiorentina. Ridimensionato una volta, punzoni integri.",2],
+ [2,"u2","rings","Solitario Art Déco","tt","Old-mine cut diamond","Diamante taglio vecchia miniera","0.62 ct","c. 1930","IT 12","3.1","Very good",5400,118,"Old-mine diamond in an illusion setting of white gold on a slim yellow gold shank, typical of 1930s Milanese workshops.","Diamante taglio vecchia miniera in castone illusione di oro bianco su gambo sottile in oro giallo, tipico dei laboratori milanesi anni '30.",4],
+ [3,"u7","rings","Eternity Riviera","yg","Round brilliant diamonds","Diamanti taglio brillante","1.05 ct tot.","1980s","IT 13","4.2","Excellent",2850,83,"Half-eternity band with eleven matched brilliants in a channel setting. Freshly polished, original box.","Veretta con undici brillanti abbinati incastonati a binario. Lucidata di recente, astuccio originale.",1],
+ [4,"u165","rings","Contrarié Smeraldi","yg","Emeralds and diamonds","Smeraldi e diamanti","0.85 ct","1960s","IT 15","5.6","Very good",4200,141,"A toi-et-moi crossover set with calibré emeralds facing a row of brilliant-cut diamonds.","Contrarié toi-et-moi con smeraldi calibrati affiancati a una fila di diamanti taglio brillante.",9],
+ [5,"u168","rings","Anello Zaffiro di Ceylon","pt","Ceylon sapphire, diamond halo","Zaffiro di Ceylon, contorno diamanti","2.10 ct","c. 1955","IT 13","5.9","Excellent",12800,96,"Unheated cornflower-blue Ceylon sapphire framed by a halo of brilliants, with diamond-set shoulders in platinum.","Zaffiro di Ceylon non riscaldato blu fiordaliso, contorno di brillanti e spalle pavé in platino.",12],
+ [6,"u172","rings","Zaffiro Taglio Smeraldo","wg","Teal sapphire, diamonds","Zaffiro teal, diamanti","1.65 ct","1990s","IT 14","4.8","Excellent",6900,154,"Emerald-cut teal sapphire in a double halo with a diamond-set split shank.","Zaffiro teal taglio smeraldo in doppio contorno con gambo diviso pavé.",15],
+ [7,"u181","rings","Cocktail Acquamarina","yg","Aquamarine, sapphires","Acquamarina, zaffiri","9.40 ct","1960s","IT 15","11.2","Very good",7600,77,"A sculptural cocktail ring: a large checkerboard aquamarine wrapped in sapphire-set gold ribbons.","Anello cocktail scultoreo: grande acquamarina a scacchiera avvolta da nastri d'oro con zaffiri.",18],
+ [8,"u28","necklaces","Collier Filigrana Imperiale","yg","Rubies","Rubini","2.30 ct","1970s","42 cm","58.4","Excellent",9800,162,"Graduated filigree collar in high-carat gold, each petal finished by hand with a cabochon ruby.","Collier graduato in filigrana d'oro, ogni petalo rifinito a mano con rubino cabochon.",3],
+ [9,"u31","necklaces","Catena Corona","yg","Diamonds, rubies","Diamanti, rubini","0.40 ct","1980s","50 cm","24.0","Excellent",3200,105,"Rope chain with a crown pendant set with diamonds and a ruby band. Pendant detaches.","Catena torchon con pendente a corona con diamanti e fascia di rubini. Pendente removibile.",7],
+ [10,"u33","necklaces","Collier Goccia Granato","yg","Garnets","Granati","3.10 ct","1960s","44 cm","16.7","Very good",2450,121,"Fine Venetian-link necklace with garnet drops falling from a central gold medallion.","Collana a maglia veneziana con gocce di granato pendenti da un medaglione centrale.",21],
+ [11,"u42","necklaces","Pendente Cuscino Pavé","wg","Pavé diamonds","Diamanti pavé","0.90 ct","2000s","45 cm","5.2","Excellent",3600,170,"Cushion pendant with a pavé diamond face and halo, on its original box chain.","Pendente a cuscino con superficie pavé e contorno, su catena veneziana originale.",5],
+ [12,"u145","necklaces","Filo di Perle Akoya","wg","Akoya pearls 7 mm, diamond clasp","Perle Akoya 7 mm, chiusura con diamante","—","1970s","46 cm","28.9","Very good",2100,88,"Single strand of 7 mm Akoya pearls, hand-knotted, with a white gold diamond clasp.","Filo di perle Akoya da 7 mm annodato a mano, chiusura in oro bianco con diamante.",25],
+ [13,"u185","necklaces","Pendente Indicolite","yg","Indicolite tourmaline","Tormalina indicolite","6.20 ct","1990s","48 cm","9.4","Excellent",5750,173,"Step-cut indicolite tourmaline in a bezel of yellow gold, on a fine faceted chain.","Tormalina indicolite taglio a gradini in castone d'oro giallo, su catena sfaccettata.",6],
+ [14,"u54","bracelets","Bracciale Groumette","yg","—","—","—","1970s","19 cm","42.0","Excellent",4900,110,"Heavy curb-link bracelet with a box clasp and safety eight. Solid, not hollow.","Bracciale groumette pesante con chiusura a scatola e sicura a otto. Pieno, non vuoto.",10],
+ [15,"u57","bracelets","Bangle Intreccio Rosa","rg","Diamonds","Diamanti","0.70 ct","1980s","17.5 cm","21.3","Very good",3750,127,"Woven rose gold bangle with diamond accents at each crossing.","Bangle intrecciato in oro rosa con diamanti a ogni incrocio.",14],
+ [16,"u63","bracelets","Coppia Bangle Fiorentini","yg","Diamonds","Diamanti","1.10 ct","1960s","18 cm","46.5","Very good",6200,99,"A pair of hand-chased Florentine bangles, sold together.","Coppia di bangle cesellati a mano in stile fiorentino, venduti insieme.",19],
+ [17,"u65","bracelets","Bracciale Zaffiri e Diamanti","wg","Sapphires, diamonds","Zaffiri, diamanti","4.20 / 3.10 ct","1990s","18 cm","22.8","Excellent",18500,180,"Alternating oval links of sapphire and diamond, each stone claw-set.","Maglie ovali alternate di zaffiri e diamanti, ogni pietra incastonata a griffe.",8],
+ [18,"u66","bracelets","Tennis Riviera","wg","Round brilliant diamonds","Diamanti taglio brillante","4.00 ct","2000s","18 cm","14.6","Excellent",9400,165,"Classic four-claw tennis bracelet, 52 brilliants of G–H colour, VS clarity.","Tennis classico a quattro griffe, 52 brillanti colore G–H, purezza VS.",11],
+ [19,"u44","earrings","Orecchini Fronde","wg","Marquise and pear diamonds","Diamanti marquise e goccia","2.40 ct","1990s","3.2 cm","9.1","Excellent",8200,149,"Laurel-leaf earrings in marquise and pear diamonds, with post and clip backs.","Orecchini a foglia d'alloro con diamanti marquise e goccia, perno e clip.",13],
+ [20,"u74","earrings","Pendenti Zaffiro Goccia","wg","Sapphires, diamonds","Zaffiri, diamanti","3.60 ct","1980s","5.5 cm","12.4","Very good",7300,137,"Three-tier drops of pear sapphires with diamond surrounds.","Pendenti a tre livelli con zaffiri a goccia e contorni di diamanti.",16],
+ [21,"u86","earrings","Orecchini Margherita","yg","Diamonds","Diamanti","0.95 ct","1950s","1.4 cm","5.0","Very good",2950,73,"Daisy cluster studs with a central old-European diamond.","Orecchini a margherita con diamante centrale taglio antico europeo.",22],
+ [22,"u90","earrings","Clip Rubino Belle Époque","yg","Rubies, rose-cut diamonds","Rubini, diamanti taglio rosa","1.30 ct","c. 1905","2.1 cm","8.3","Good",4450,58,"Belle Époque clip earrings: oval rubies in a crown of rose-cut diamonds.","Orecchini a clip Belle Époque: rubini ovali in una corona di diamanti taglio rosa.",27],
+ [23,"u91","earrings","Corona d'Alloro","pt","Diamonds","Diamanti","3.20 ct","1960s","2.6 cm","10.2","Excellent",11900,92,"Wreath earrings in platinum with marquise and round diamonds.","Orecchini a ghirlanda in platino con diamanti marquise e rotondi.",20],
+ [24,"u116","watches","Automatico 1962","tt","—","—","—","1962","34 mm","38.0","Serviced 2025","2600",61,"Gold-capped automatic dress watch on a lizard strap. Movement serviced in 2025.","Orologio automatico da città con cassa placcata oro e cinturino in lucertola. Revisionato nel 2025.",17],
+ [25,"u123","watches","Presidenziale Oro 18kt","yg","—","—","—","1978","36 mm","96.0","Serviced 2024",21500,50,"Automatic day-date in solid yellow gold, champagne dial, fluted bezel.","Automatico con giorno e data in oro giallo massiccio, quadrante champagne, lunetta zigrinata.",30],
+ [26,"u127","watches","Savonette 1890","yg","—","—","—","c. 1890","50 mm","82.0","Working, serviced","3300",44,"Hunter-case pocket watch in 18kt gold with enamel dial and engraved covers.","Orologio da tasca savonette in oro 18kt con quadrante smaltato e coperchi incisi.",23],
+ [27,"u129","brooches","Spilla Bouquet Smeraldo","yg","Emerald, diamonds","Smeraldo, diamanti","1.40 ct","1950s","5.5 cm","13.2","Very good",3900,103,"Spray brooch with a cabochon emerald and diamond leaves.","Spilla a bouquet con smeraldo cabochon e foglie di diamanti.",24],
+ [28,"u133","brooches","Spilla Farfalla","pt","Diamonds, pearl","Diamanti, perla","1.80 ct","1930s","5.0 cm","11.0","Very good",6400,66,"Art Déco butterfly in platinum with pavé wings and a pearl body.","Farfalla Art Déco in platino con ali pavé e corpo in perla.",26],
+ [29,"u135","brooches","Spilla Tormalina Rosa","tt","Pink tourmaline, diamonds","Tormalina rosa, diamanti","4.50 ct","c. 1900","6.2 cm","14.5","Good",5200,39,"Silver-topped gold pendant-brooch with a pink tourmaline and rose-cut diamonds.","Spilla-pendente in oro e argento con tormalina rosa e diamanti taglio rosa.",28],
+ [30,"u136","brooches","Spilla Ametista Vittoriana","yg","Amethyst, seed pearls","Ametista, perline","3.00 ct","c. 1880","3.4 cm","7.6","Good",2350,31,"Victorian amethyst brooch with seed pearls, in its velvet box.","Spilla vittoriana con ametista e perline, nel suo astuccio di velluto.",29],
+ [31,"u169","rings","Chevalier Zaffiro","yg","Sapphire, pavé diamonds","Zaffiro, diamanti pavé","3.20 ct","1990s","IT 16","12.4","Excellent",8700,186,"Architectural chevalier ring: an oval sapphire set sideways between two pavé diamond shoulders.","Chevalier architettonico: zaffiro ovale incastonato di lato tra due spalle pavé di diamanti.",0],
+ [32,"u2290","rings","Coppia Fedi Intrecciate","yg","—","—","—","1950s","IT 12 / 17","9.8","Very good",1450,191,"A matched pair of interlocking wedding bands with a hand-engraved inner line. Sold as a pair.","Coppia di fedi intrecciate con incisione interna a mano. Vendute in coppia.",2],
+ [33,"u36","necklaces","Collana Medaglione Rubini","yg","Rubies, pearl","Rubini, perla","1.10 ct","1970s","46 cm","32.5","Very good",4600,193,"Wheat-link necklace with a domed granulated medallion and a fringe of ruby drops.","Collana a maglia spiga con medaglione granulato e frangia di gocce di rubino.",3],
+ [34,"u48","necklaces","Pendente Lingotto Diamanti","rg","Princess-cut diamonds","Diamanti taglio princess","0.75 ct","2000s","50 cm","11.9","Excellent",2780,197,"Rose gold ingot pendant set with ten princess-cut diamonds, on a heavy anchor chain.","Pendente a lingotto in oro rosa con dieci diamanti taglio princess, su catena a maglia marina.",4],
+ [35,"u49","necklaces","Rivière Smeraldi e Diamanti","wg","Emeralds, diamonds","Smeraldi, diamanti","6.80 ct","1980s","41 cm","27.3","Excellent",24500,201,"Rivière of pear emeralds alternating with diamond clusters. Matching earrings were sold separately.","Rivière di smeraldi a goccia alternati a cluster di diamanti. Orecchini abbinati venduti a parte.",5],
+ [36,"u146","necklaces","Sautoir Perle Naturali","yg","Natural seed pearls","Perline naturali","—","c. 1920","120 cm","18.6","Good",3350,204,"Long sautoir of natural seed pearls with gold spacers, wearable as a triple strand.","Lungo sautoir di perline naturali con distanziatori in oro, indossabile a tre fili.",6],
+ [37,"u70","bracelets","Bangle Serpente Diamanti","wg","Baguette and round diamonds","Diamanti baguette e rotondi","5.40 ct","1990s","Wrist 16–17 cm","34.1","Excellent",16900,208,"Flexible serpent bangle paved with baguette and round diamonds, coiling twice around the wrist.","Bangle a serpente flessibile pavé di diamanti baguette e rotondi, avvolto due volte al polso.",1],
+ [38,"u77","earrings","Pendenti Jhumka Filigrana","yg","Rubies","Rubini","0.40 ct","1970s","6.0 cm","14.8","Very good",2650,211,"Bell-shaped filigree drops with granulated paisley tops and tiny ruby accents.","Pendenti a campana in filigrana con parte superiore cashmere granulata e piccoli rubini.",7],
+ [39,"u81","earrings","Cerchi Torchon Perla","yg","Mabé pearls","Perle mabé","—","1980s","2.4 cm","10.6","Excellent",1890,214,"Twisted-rope gold hoops with a mabé pearl set at the front of each.","Cerchi in oro a torchon con perla mabé incastonata sul fronte.",8],
+ [40,"u119","watches","Tasca Scheletrato 1920","tt","—","—","—","c. 1920","48 mm","74.0","Serviced 2025",4100,217,"Open-face pocket watch with a skeletonised movement visible through the dial, on its original chain.","Orologio da tasca con movimento scheletrato visibile dal quadrante, con la catena originale.",9],
+ [41,"u128","watches","Carica Manuale Quadrante Blu","yg","—","—","—","1968","35 mm","41.0","Serviced 2024",3450,221,"Slim gold-capped dress watch with a sunburst blue dial and baton markers.","Orologio sottile placcato oro con quadrante blu soleil e indici a bastone.",10],
+ [42,"u131","brooches","Spille Fiore Satinato","yg","Pearl","Perla","—","1960s","4.5 cm","16.2","Very good",2200,224,"Set of three satin-finished gold flower brooches, one with a pearl heart. Sold as a set.","Set di tre spille a fiore in oro satinato, una con cuore di perla. Vendute insieme.",11]
+];
+const PRODUCTS = RAW.map(r=>({id:r[0],img:r[1],cat:r[2],name:r[3],metal:r[4],stone:{en:r[5],it:r[6]},carat:r[7],era:r[8],size:r[9],weight:r[10],cond:r[11],price:+r[12],cert:String(r[13]).padStart(3,"0"),desc:{en:r[14],it:r[15]},added:r[0]>30?r[16]:r[16]+12,sku:"GO-"+String(r[0]).padStart(3,"0")}));
+const byId = id => PRODUCTS.find(p=>p.id===+id);
+
+const T = {
+ en:{navCollection:"Collection",navMaison:"The Maison",navBoutique:"Boutique",navAuth:"Authenticity",navStaff:"Staff",bag:"Shopping bag",guest:"Sign in",
+  heroEyebrow:"Vintage high jewelry maison · Milan, Italy",heroTitle:"Unique Vintage Pieces & Certified Pre-Owned Fine Jewelry",heroLead:"Every jewel embodies centuries of goldsmith mastery. Individually authenticated by our certified gemologists, available as a strictly single creation.",
+  explore:"Explore the collection",bookViewing:"Book private boutique viewing",stockNote:"Every jewel appears in the catalogue as a single piece (quantity = 1).",
+  t1:"Certified",t1s:"Gemological report with every piece",t2:"One of one",t2s:"{n} unique items, never restocked",t3:"Bank transfer",t3s:"Staff confirm receipt within 1 working day",t4:"48-hour viewing hold",t4s:"Reserve a piece to see it in the boutique",
+  colEyebrow:"Maison Giallo Oro Milano",colTitle:"Our Exclusive Collection",colLead:"{n} unique creations meticulously curated by our master jewelers",
+  all:"All jewelry",rings:"Rings",necklaces:"Necklaces & pendants",bracelets:"Bracelets",earrings:"Earrings",watches:"Prestige timepieces",brooches:"Brooches",
+  search:"Search by stone, style, SKU…",allMetals:"All metals",allPrices:"All price ranges",p1:"Under €3,000",p2:"€3,000 – €7,000",p3:"€7,000 – €15,000",p4:"Over €15,000",
+  sNew:"Newest arrivals",sLow:"Price: low to high",sHigh:"Price: high to low",availability:"Availability:",allStatuses:"All statuses",availOnly:"Available only",found:"pieces found",noResults:"No pieces match these filters.",
+  available:"Available",viewing:"Reserved for viewing",payment:"Awaiting payment",sold:"Sold",
+  howEyebrow:"How buying works",howTitle:"From the vitrine to your hands",h1:"Browse",h1s:"Study details, photos and the gemological certificate.",h2:"Register",h2s:"Create an account before placing an order.",h3:"Transfer",h3s:"Your order holds the piece for 72 hours while you pay by bank transfer.",h4:"Confirm",h4s:"Our staff confirm receipt and arrange insured delivery or collection.",
+  maisonEyebrow:"The Maison",maisonTitle:"Forty years of Italian goldsmithing",maisonText:"Since 1984 our family has bought, restored and resold fine jewelry. Each piece passes through our bench before it reaches the vitrine: cleaned, checked and, where needed, restored by hand.",maisonText2:"We keep only what we would wear ourselves. That is why the collection stays small.",readMore:"Discover the Maison",
+  bEyebrow:"Private viewing",bTitle:"See it in the boutique first",bText:"Reserve any available piece and we hold it for you for 48 hours. No calendar needed: come in during opening hours and ask for your reservation.",visit:"Visit the boutique",
+  home:"Home",era:"Era",metal:"Metal",stone:"Stones",carat:"Carat weight",size:"Size / length",weight:"Weight",condition:"Condition",sku:"Reference",certNo:"Certificate",
+  addBag:"Add to shopping bag",inBag:"In your bag",book48:"Book viewing · 48 h",unique:"Unique piece. Quantity: 1. When it sells, it leaves the catalogue.",
+  certTitle:"Certificate of authenticity",certSub:"Issued by our in-house gemologist. PDF supplied with the piece.",viewCert:"View certificate",
+  accShip:"Delivery & collection",accShipT:"Insured courier anywhere in Italy for €30, delivered in 2–4 working days after payment is confirmed. Or collect it free of charge at our Milan boutique.",
+  accPay:"Payment",accPayT:"Pay by bank transfer in EUR. Your order holds the piece for 72 hours. We confirm receipt by email and notification.",
+  accRet:"Returns",accRetT:"Send a return request from your account within 14 days of delivery. Our team reviews each request by hand.",
+  tFront:"Front",tDetail:"Detail",tCert:"Certificate",hover:"Hover to zoom",tap:"Tap to enlarge",
+  related:"More from this category",
+  stAvailable:"Available now",stAvailableT:"Add it to your bag or reserve a viewing in the boutique.",stViewing:"Reserved for a boutique viewing",stViewingT:"Held for another client. It returns to the collection if it is not purchased.",stPayment:"Awaiting bank transfer",stPaymentT:"An order is waiting for payment. The piece is held until it is confirmed or the hold expires.",stSold:"Sold",stSoldT:"This piece has found its new owner. Ask us about similar jewels.",
+  yourHold:"Held for you",left:"left",
+  bagTitle:"Shopping bag",bagEmpty:"Your bag is empty.",remove:"Remove",unavailableNow:"No longer available",delivery:"Delivery",dCourier:"Insured courier · Italy",dCourierS:"2–4 working days after payment",dPickup:"Collect at the boutique",dPickupS:"Via della Spiga, Milano · free",subtotal:"Subtotal",shipping:"Delivery",total:"Total",free:"Free",
+  placeOrder:"Place order · pay by bank transfer",payNote:"No card payment online. Your order holds the piece for 72 hours while you complete the bank transfer.",
+  orderPlaced:"Order placed",orderPlacedT:"Make a bank transfer with the details below. The piece is reserved for you until",beneficiary:"Beneficiary",iban:"IBAN",bic:"BIC",reference:"Payment reference",amount:"Amount",copy:"Copy",copied:"Copied",done:"Done",toAccount:"View in my account",
+  bookTitle:"Reserve a private viewing",bookLead:"We hold this piece for you for 48 hours. Come to the boutique during opening hours and ask for your reservation. No appointment needed.",phone:"Phone",note:"Note for our staff (optional)",confirmBook:"Confirm reservation",bookedTitle:"Your viewing is reserved",bookedT:"We are holding this piece for you until",address:"Boutique address",hours:"Mon–Sat 10:00–19:00",
+  loginTitle:"Sign in or create an account",loginLead:"An account is needed to place an order or reserve a viewing.",name:"Full name",email:"Email",password:"Password",continue:"Continue",demoFill:"Demo data is pre-filled.",
+  myAccount:"My account",myOrders:"My orders",myViewings:"My viewings",noOrders:"No orders yet.",noViewings:"No viewings reserved.",signOut:"Sign out",staffView:"Open staff console",cancelRes:"Cancel reservation",
+  oAwaiting:"Awaiting transfer",oPaid:"Paid · preparing",oCancelled:"Cancelled",oExpired:"Expired",rActive:"Active",rDone:"Completed",rPurchased:"Purchased",rExpired:"Expired",rCancelled:"Cancelled",
+  staffTitle:"Staff console",staffLead:"Confirm payments, manage viewing holds and record boutique sales. Works on a phone.",staffSign:"Sign in as staff (demo)",staffUser:"Marco Bianchi · Boutique manager",
+  kAvail:"Available",kView:"Viewing holds",kPay:"Awaiting payment",kSold:"Sold",inv:"Inventory",orders:"Orders",viewings:"Viewings",activity:"Activity",
+  markSold:"Mark as sold in boutique",confirmPay:"Confirm payment received",cancelOrder:"Cancel order",soldAtViewing:"Sold at viewing",release:"Release hold",relist:"Return to collection",
+  holdWarn:"This piece has an active hold. Resolve the hold first so the customer is not overridden.",confirmSoldQ:"Mark this piece as sold? It disappears from sale on the website immediately.",yes:"Yes, mark sold",no:"Cancel",
+  sim:"Simulate +24 h",reset:"Reset demo",exitStaff:"Exit staff",simT:"Clock moved 24 hours forward. Expired holds were released.",
+  expires:"Hold expires",customer:"Customer",placed:"Placed",
+  nOrderStaff:"New order {ref}: {item} — awaiting bank transfer",nViewStaff:"New viewing reservation: {item} for {name}",nPaid:"Payment received for {ref}. We are preparing your {item}.",nViewDone:"Your viewing for {item} was closed.",nExpired:"Hold expired for {item}. It is back in the collection.",
+  footAbout:"Certified pre-owned and vintage fine jewelry. Every piece is unique.",fShop:"Shop",fBoutique:"Boutique",fPay:"Payment & delivery",fPay1:"Bank transfer in EUR",fPay2:"Insured courier in Italy",fPay3:"Free boutique collection",
+  demoTag:"Clickable prototype · demo data",vat:"VAT included · margin scheme",langSw:"Italiano",
+  pmEyebrow:"The Maison",pmTitle:"A Milanese house of fine jewelry",pmLead:"Founded in 1984, Giallo Oro buys, restores and resells exceptional jewelry, one piece at a time.",
+  pm1:"Hand-picked",pm1t:"We buy from private collections and estates, and accept only pieces we can stand behind.",pm2:"Restored at our bench",pm2t:"Cleaning, re-tipping and resizing are done in-house before a piece is listed.",pm3:"Sold once",pm3t:"Each listing is a single physical object. When it sells, it leaves the catalogue.",
+  pbEyebrow:"Boutique",pbTitle:"Visit us in Milan",pbLead:"Every piece in the online collection can be seen in person. Reserve a viewing online and we hold it for 48 hours.",
+  paEyebrow:"Authenticity",paTitle:"Every stone, measured and documented",paLead:"Our certified gemologists examine each piece and issue a certificate that travels with it.",
+  pa1:"Metal assay",pa1t:"Hallmarks are read and the alloy is tested before listing.",pa2:"Gemological report",pa2t:"Stones are identified, weighed and graded for colour and clarity.",pa3:"Certificate on the page",pa3t:"A PDF or image of the certificate is attached to the product page and handed over with the piece.",
+  toastBag:"Added to your bag",toastBooked:"Viewing reserved for 48 hours",toastOrder:"Order placed. Bank details are in your account.",toastSold:"Marked as sold. Removed from sale on the website.",toastPaid:"Payment confirmed. Customer notified.",toastRel:"Hold released. The piece is available again.",toastCancel:"Order cancelled. The piece is available again.",toastReset:"Demo data restored.",toastIn:"Signed in",
+  noNotif:"No notifications yet.",notifs:"Notifications",markRead:"Mark all read",holdsOn:"On hold",signInStaffFirst:"Staff only",
+  filterAll:"All",searchInv:"Search inventory…",perHold:"72 h payment hold · 48 h viewing hold"
+ },
+ it:{navCollection:"Collezione",navMaison:"La Maison",navBoutique:"Boutique",navAuth:"Autenticità",navStaff:"Staff",bag:"Borsa",guest:"Accedi",
+  heroEyebrow:"Maison di alta gioielleria vintage · Milano",heroTitle:"Pezzi Vintage Unici e Gioielli Pre-Owned Certificati",heroLead:"Ogni gioiello racchiude secoli di maestria orafa. Autenticato singolarmente dai nostri gemmologi certificati, disponibile come creazione rigorosamente unica.",
+  explore:"Esplora la collezione",bookViewing:"Prenota una visione privata",stockNote:"Ciascun gioiello è presente in catalogo in un unico esemplare (quantità = 1).",
+  t1:"Certificato",t1s:"Perizia gemmologica con ogni pezzo",t2:"Pezzo unico",t2s:"{n} gioielli unici, mai riassortiti",t3:"Bonifico bancario",t3s:"Lo staff conferma entro 1 giorno lavorativo",t4:"Visione con blocco 48 ore",t4s:"Riserva un pezzo per vederlo in boutique",
+  colEyebrow:"Maison Giallo Oro Milano",colTitle:"La Nostra Collezione Esclusiva",colLead:"{n} creazioni uniche selezionate dai nostri maestri orafi",
+  all:"Tutti i gioielli",rings:"Anelli",necklaces:"Collane e pendenti",bracelets:"Bracciali",earrings:"Orecchini",watches:"Orologi di prestigio",brooches:"Spille",
+  search:"Cerca per pietra, stile, codice…",allMetals:"Tutti i metalli",allPrices:"Tutte le fasce di prezzo",p1:"Fino a € 3.000",p2:"€ 3.000 – 7.000",p3:"€ 7.000 – 15.000",p4:"Oltre € 15.000",
+  sNew:"Nuovi arrivi",sLow:"Prezzo crescente",sHigh:"Prezzo decrescente",availability:"Disponibilità:",allStatuses:"Tutti gli stati",availOnly:"Solo disponibili",found:"pezzi trovati",noResults:"Nessun pezzo corrisponde ai filtri.",
+  available:"Disponibile",viewing:"Riservato per visione",payment:"In attesa di pagamento",sold:"Venduto",
+  howEyebrow:"Come acquistare",howTitle:"Dalla vetrina alle tue mani",h1:"Scegli",h1s:"Studia dettagli, foto e certificato gemmologico.",h2:"Registrati",h2s:"Crea un account prima di ordinare.",h3:"Bonifico",h3s:"L'ordine blocca il pezzo per 72 ore mentre paghi con bonifico.",h4:"Conferma",h4s:"Lo staff conferma l'incasso e organizza consegna assicurata o ritiro.",
+  maisonEyebrow:"La Maison",maisonTitle:"Quarant'anni di arte orafa italiana",maisonText:"Dal 1984 la nostra famiglia acquista, restaura e rivende gioielli di pregio. Ogni pezzo passa dal nostro banco prima della vetrina: pulito, controllato e, se serve, restaurato a mano.",maisonText2:"Teniamo solo ciò che indosseremmo noi. Per questo la collezione resta piccola.",readMore:"Scopri la Maison",
+  bEyebrow:"Visione privata",bTitle:"Vedilo prima in boutique",bText:"Riserva un pezzo disponibile e lo teniamo per te 48 ore. Nessun calendario: passa in orario di apertura e chiedi della tua prenotazione.",visit:"Visita la boutique",
+  home:"Home",era:"Epoca",metal:"Metallo",stone:"Pietre",carat:"Caratura",size:"Misura / lunghezza",weight:"Peso",condition:"Condizioni",sku:"Codice",certNo:"Certificato",
+  addBag:"Aggiungi alla borsa",inBag:"Nella tua borsa",book48:"Prenota visione · 48 h",unique:"Pezzo unico. Quantità: 1. Una volta venduto, esce dal catalogo.",
+  certTitle:"Certificato di autenticità",certSub:"Emesso dal nostro gemmologo interno. PDF consegnato con il gioiello.",viewCert:"Vedi certificato",
+  accShip:"Consegna e ritiro",accShipT:"Corriere assicurato in tutta Italia a € 30, consegna in 2–4 giorni lavorativi dalla conferma del pagamento. Oppure ritiro gratuito nella boutique di Milano.",
+  accPay:"Pagamento",accPayT:"Pagamento con bonifico in EUR. L'ordine blocca il pezzo per 72 ore. Confermiamo l'incasso via email e notifica.",
+  accRet:"Resi",accRetT:"Invia una richiesta di reso dal tuo account entro 14 giorni dalla consegna. Ogni richiesta è valutata a mano.",
+  tFront:"Fronte",tDetail:"Dettaglio",tCert:"Certificato",hover:"Passa sopra per ingrandire",tap:"Tocca per ingrandire",
+  related:"Altro da questa categoria",
+  stAvailable:"Disponibile ora",stAvailableT:"Aggiungilo alla borsa o prenota una visione in boutique.",stViewing:"Riservato per una visione in boutique",stViewingT:"Bloccato per un altro cliente. Torna in collezione se non viene acquistato.",stPayment:"In attesa di bonifico",stPaymentT:"Un ordine attende il pagamento. Il pezzo resta bloccato fino a conferma o scadenza.",stSold:"Venduto",stSoldT:"Questo gioiello ha trovato un nuovo proprietario. Chiedici pezzi simili.",
+  yourHold:"Bloccato per te",left:"rimanenti",
+  bagTitle:"Borsa",bagEmpty:"La tua borsa è vuota.",remove:"Rimuovi",unavailableNow:"Non più disponibile",delivery:"Consegna",dCourier:"Corriere assicurato · Italia",dCourierS:"2–4 giorni lavorativi dal pagamento",dPickup:"Ritiro in boutique",dPickupS:"Via della Spiga, Milano · gratuito",subtotal:"Subtotale",shipping:"Consegna",total:"Totale",free:"Gratis",
+  placeOrder:"Conferma ordine · paga con bonifico",payNote:"Nessun pagamento con carta online. L'ordine blocca il pezzo per 72 ore mentre completi il bonifico.",
+  orderPlaced:"Ordine confermato",orderPlacedT:"Effettua il bonifico con i dati qui sotto. Il pezzo è riservato per te fino al",beneficiary:"Beneficiario",iban:"IBAN",bic:"BIC",reference:"Causale",amount:"Importo",copy:"Copia",copied:"Copiato",done:"Fatto",toAccount:"Vedi nel mio account",
+  bookTitle:"Prenota una visione privata",bookLead:"Teniamo questo pezzo per te 48 ore. Vieni in boutique in orario di apertura e chiedi della tua prenotazione. Nessun appuntamento necessario.",phone:"Telefono",note:"Nota per lo staff (facoltativa)",confirmBook:"Conferma prenotazione",bookedTitle:"Visione prenotata",bookedT:"Teniamo questo pezzo per te fino al",address:"Indirizzo boutique",hours:"Lun–Sab 10:00–19:00",
+  loginTitle:"Accedi o crea un account",loginLead:"Serve un account per ordinare o prenotare una visione.",name:"Nome e cognome",email:"Email",password:"Password",continue:"Continua",demoFill:"Dati demo già compilati.",
+  myAccount:"Il mio account",myOrders:"I miei ordini",myViewings:"Le mie visioni",noOrders:"Nessun ordine.",noViewings:"Nessuna visione prenotata.",signOut:"Esci",staffView:"Apri console staff",cancelRes:"Annulla prenotazione",
+  oAwaiting:"In attesa di bonifico",oPaid:"Pagato · in preparazione",oCancelled:"Annullato",oExpired:"Scaduto",rActive:"Attiva",rDone:"Conclusa",rPurchased:"Acquistato",rExpired:"Scaduta",rCancelled:"Annullata",
+  staffTitle:"Console staff",staffLead:"Conferma pagamenti, gestisci le visioni e registra le vendite in boutique. Funziona da smartphone.",staffSign:"Accedi come staff (demo)",staffUser:"Marco Bianchi · Responsabile boutique",
+  kAvail:"Disponibili",kView:"Visioni attive",kPay:"Attesa pagamento",kSold:"Venduti",inv:"Inventario",orders:"Ordini",viewings:"Visioni",activity:"Attività",
+  markSold:"Segna venduto in boutique",confirmPay:"Conferma bonifico ricevuto",cancelOrder:"Annulla ordine",soldAtViewing:"Venduto alla visione",release:"Sblocca",relist:"Rimetti in vendita",
+  holdWarn:"Questo pezzo ha un blocco attivo. Risolvi prima il blocco per non scavalcare il cliente.",confirmSoldQ:"Segnare il pezzo come venduto? Sparisce subito dalla vendita sul sito.",yes:"Sì, venduto",no:"Annulla",
+  sim:"Simula +24 h",reset:"Ripristina demo",exitStaff:"Esci da staff",simT:"Orologio avanzato di 24 ore. I blocchi scaduti sono stati rilasciati.",
+  expires:"Scadenza blocco",customer:"Cliente",placed:"Creato",
+  nOrderStaff:"Nuovo ordine {ref}: {item} — in attesa di bonifico",nViewStaff:"Nuova visione: {item} per {name}",nPaid:"Pagamento ricevuto per {ref}. Stiamo preparando {item}.",nViewDone:"La tua visione per {item} è stata chiusa.",nExpired:"Blocco scaduto per {item}. È di nuovo in collezione.",
+  footAbout:"Gioielli pre-owned e vintage certificati. Ogni pezzo è unico.",fShop:"Shop",fBoutique:"Boutique",fPay:"Pagamento e consegna",fPay1:"Bonifico bancario in EUR",fPay2:"Corriere assicurato in Italia",fPay3:"Ritiro gratuito in boutique",
+  demoTag:"Prototipo cliccabile · dati demo",vat:"IVA inclusa · regime del margine",langSw:"English",
+  pmEyebrow:"La Maison",pmTitle:"Una casa milanese di alta gioielleria",pmLead:"Fondata nel 1984, Giallo Oro acquista, restaura e rivende gioielli eccezionali, un pezzo alla volta.",
+  pm1:"Selezione a mano",pm1t:"Acquistiamo da collezioni private ed eredità, e accettiamo solo pezzi di cui rispondiamo.",pm2:"Restauro al banco",pm2t:"Pulizia, ripresa griffe e ridimensionamento avvengono in laboratorio prima della messa in vendita.",pm3:"Venduto una volta",pm3t:"Ogni scheda è un unico oggetto fisico. Una volta venduto, esce dal catalogo.",
+  pbEyebrow:"Boutique",pbTitle:"Vieni a trovarci a Milano",pbLead:"Ogni pezzo della collezione online si può vedere dal vivo. Prenota una visione online e lo teniamo per 48 ore.",
+  paEyebrow:"Autenticità",paTitle:"Ogni pietra misurata e documentata",paLead:"I nostri gemmologi certificati esaminano ogni pezzo ed emettono un certificato che lo accompagna.",
+  pa1:"Saggio del metallo",pa1t:"Leggiamo i punzoni e testiamo la lega prima della pubblicazione.",pa2:"Perizia gemmologica",pa2t:"Le pietre sono identificate, pesate e classificate per colore e purezza.",pa3:"Certificato sulla scheda",pa3t:"Un PDF o un'immagine del certificato è allegato alla scheda prodotto e consegnato con il gioiello.",
+  toastBag:"Aggiunto alla borsa",toastBooked:"Visione riservata per 48 ore",toastOrder:"Ordine confermato. I dati per il bonifico sono nel tuo account.",toastSold:"Segnato come venduto. Rimosso dalla vendita sul sito.",toastPaid:"Pagamento confermato. Cliente avvisato.",toastRel:"Blocco rimosso. Il pezzo è di nuovo disponibile.",toastCancel:"Ordine annullato. Il pezzo è di nuovo disponibile.",toastReset:"Dati demo ripristinati.",toastIn:"Accesso effettuato",
+  noNotif:"Nessuna notifica.",notifs:"Notifiche",markRead:"Segna tutte lette",holdsOn:"Bloccati",signInStaffFirst:"Solo staff",
+  filterAll:"Tutti",searchInv:"Cerca in inventario…",perHold:"Blocco pagamento 72 h · blocco visione 48 h"
+ }
+};
+
+const H = 3600e3;
+const KEY = "giallo-oro-proto-v2";
+function seed(){
+  const now = Date.now();
+  return {lang:"en", offset:0, role:"customer", staffIn:false,
+    user:{name:"Giulia Rossi",email:"giulia.rossi@example.it",phone:"+39 333 000 0000"},
+    bag:[3],
+    status:{5:"viewing",18:"payment",25:"sold",12:"sold"},
+    orders:[{id:"o1",ref:"GO-2026-0141",pid:18,customer:"Luca Ferri",email:"l.ferri@example.it",delivery:"courier",total:9430,created:now-20*H,expires:now+52*H,status:"awaiting"},
+            {id:"o0",ref:"GO-2026-0138",pid:25,customer:"Anna Conti",email:"a.conti@example.it",delivery:"pickup",total:21500,created:now-96*H,expires:now-24*H,status:"paid"}],
+    res:[{id:"r1",pid:5,customer:"Sofia Marino",email:"s.marino@example.it",phone:"+39 340 000 0000",created:now-6*H,expires:now+42*H,status:"active"}],
+    notif:[{to:"customer",k:"welcome",text:{en:"Welcome back, Giulia. Three new pieces arrived this week.",it:"Bentornata, Giulia. Tre nuovi pezzi questa settimana."},t:now-2*H,read:false},
+           {to:"staff",text:{en:"New order GO-2026-0141: Tennis Riviera — awaiting bank transfer",it:"Nuovo ordine GO-2026-0141: Tennis Riviera — in attesa di bonifico"},t:now-20*H,read:false},
+           {to:"staff",text:{en:"New viewing reservation: Anello Zaffiro di Ceylon for Sofia Marino",it:"Nuova visione: Anello Zaffiro di Ceylon per Sofia Marino"},t:now-6*H,read:false}],
+    log:[{t:now-96*H,text:{en:"Payment confirmed for GO-2026-0138 (Presidenziale Oro 18kt)",it:"Pagamento confermato per GO-2026-0138 (Presidenziale Oro 18kt)"}},
+         {t:now-50*H,text:{en:"Filo di Perle Akoya marked as sold in boutique",it:"Filo di Perle Akoya segnato venduto in boutique"}},
+         {t:now-20*H,text:{en:"Order GO-2026-0141 placed by Luca Ferri",it:"Ordine GO-2026-0141 creato da Luca Ferri"}},
+         {t:now-6*H,text:{en:"Viewing reserved by Sofia Marino (Anello Zaffiro di Ceylon)",it:"Visione riservata da Sofia Marino (Anello Zaffiro di Ceylon)"}}],
+    seq:142};
+}
+let S;
+try{ S = JSON.parse(localStorage.getItem(KEY)) }catch(e){ S = null }
+if(!S || !S.status) S = seed();
+const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(S)) }catch(e){} };
+const now = () => Date.now() + S.offset;
+const t = k => String(T[S.lang][k] ?? T.en[k] ?? k).replace("{n}", PRODUCTS.length);
+const fill = (s,o) => s.replace(/\{(\w+)\}/g,(m,k)=>o[k]??m);
+const st = id => S.status[id] || "available";
+const eur = n => new Intl.NumberFormat(S.lang==="it"?"it-IT":"en-IE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(n);
+const fdt = ms => new Intl.DateTimeFormat(S.lang==="it"?"it-IT":"en-GB",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(ms));
+const left = ms => { const d=Math.max(0,ms-now()); const h=Math.floor(d/H), m=Math.floor(d%H/60000); return h+"h "+String(m).padStart(2,"0")+"m "+t("left") };
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const $ = (s,r=document) => r.querySelector(s);
+const pn = p => p.name;
+const statusPill = s => `<span class="status s-${s}">${t(s)}</span>`;
+function notify(to,key,vars){ S.notif.unshift({to,text:{en:fill(T.en[key],vars),it:fill(T.it[key],vars)},t:now(),read:false}) }
+function log(key,vars,raw){ S.log.push({t:now(),text: raw || {en:fill(T.en[key],vars),it:fill(T.it[key],vars)}}) }
+function rawlog(en,it){ S.log.push({t:now(),text:{en,it}}) }
+
+// expire holds
+function sweep(){
+  let changed=false;
+  S.orders.forEach(o=>{ if(o.status==="awaiting" && o.expires<=now()){ o.status="expired"; if(st(o.pid)==="payment") delete S.status[o.pid]; notify(o.email===S.user?.email?"customer":"staff","nExpired",{item:byId(o.pid).name}); rawlog("Payment hold expired for "+o.ref,"Blocco pagamento scaduto per "+o.ref); changed=true }});
+  S.res.forEach(r=>{ if(r.status==="active" && r.expires<=now()){ r.status="expired"; if(st(r.pid)==="viewing") delete S.status[r.pid]; notify(r.email===S.user?.email?"customer":"staff","nExpired",{item:byId(r.pid).name}); rawlog("Viewing hold expired: "+byId(r.pid).name,"Visione scaduta: "+byId(r.pid).name); changed=true }});
+  if(changed) save();
+}
+
+let toastTimer;
+function toast(msg){ let el=$("#toast"); if(!el){el=document.createElement("div");el.id="toast";el.className="toast";el.setAttribute("role","status");document.body.appendChild(el)} el.textContent=msg; el.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.hidden=true,3200) }
+
+/* ---------- header ---------- */
+const NAV = [["collection","navCollection"],["maison","navMaison"],["boutique","navBoutique"],["authenticity","navAuth"],["staff","navStaff"]];
+function renderHeader(view){
+  $("#nav").innerHTML = NAV.map(([h,k])=>`<a href="#${h==="collection"?"home":h}" ${h==="collection"?'data-go="collection"':""} class="${(view===h||(h==="collection"&&(view==="home"||view==="product")))?"on":""}">${t(k)}</a>`).join("")+`<a href="#account" class="mobonly">${t("myAccount")}</a><a href="#" class="mobonly" id="mlang">${t("langSw")}</a>`;
+  $("#mlang").onclick=e=>{e.preventDefault(); S.lang=S.lang==="it"?"en":"it"; save(); $("#nav").classList.remove("open"); render()};
+  document.querySelectorAll("#lang button").forEach(b=>b.classList.toggle("on",b.dataset.l===S.lang));
+  $("#acctname").textContent = S.role==="staff"&&S.staffIn ? "MARCO · STAFF" : (S.user? S.user.name.split(" ")[0].toUpperCase() : t("guest"));
+  $("#bagcnt").textContent = S.bag.length;
+  const role = S.role==="staff"&&S.staffIn ? "staff":"customer";
+  const unread = S.notif.filter(n=>n.to===role && !n.read).length;
+  $("#belldot").hidden = !unread; $("#belldot").textContent = unread;
+  document.querySelectorAll("[data-t]").forEach(el=>el.textContent=t(el.dataset.t));
+  document.documentElement.lang = S.lang;
+}
+function closePops(){ $("#bellpop").innerHTML=""; $("#acctpop").innerHTML="" }
+$("#bell").onclick = e => { e.stopPropagation(); const open=$("#bellpop").innerHTML; closePops(); if(open) return;
+  const role = S.role==="staff"&&S.staffIn ? "staff":"customer";
+  const list = S.notif.filter(n=>n.to===role).slice(0,8);
+  $("#bellpop").innerHTML = `<div class="popover"><h4>${t("notifs")}</h4>${list.length?list.map(n=>`<div class="notif ${n.read?"":"unread"}">${esc(n.text[S.lang])}<small>${fdt(n.t)}</small></div>`).join(""):`<div class="notif">${t("noNotif")}</div>`}<div class="menu"><button id="markread">${t("markRead")}</button></div></div>`;
+  $("#markread").onclick=()=>{ S.notif.forEach(n=>{if(n.to===role)n.read=true}); save(); closePops(); render() };
+};
+$("#acct").onclick = e => { e.stopPropagation(); const open=$("#acctpop").innerHTML; closePops(); if(open) return;
+  if(!S.user && !(S.role==="staff"&&S.staffIn)){ openLogin(); return }
+  $("#acctpop").innerHTML = `<div class="popover menu" style="width:240px"><a href="#account">${t("myAccount")}</a><a href="#staff">${t("staffView")}</a><button id="so">${t("signOut")}</button></div>`;
+  $("#so").onclick=()=>{ S.user=null; S.staffIn=false; S.role="customer"; save(); closePops(); location.hash="#home"; render() };
+};
+document.addEventListener("click", e=>{ if(!e.target.closest(".popover")) closePops();
+  const go=e.target.closest("[data-go]"); if(go){ e.preventDefault(); goCollection() } });
+$("#lang").onclick = e => { const l=e.target.dataset.l; if(l){ S.lang=l; save(); render() } };
+$("#bagbtn").onclick = () => openBag();
+$("#burger").onclick = () => $("#nav").classList.toggle("open");
+function goCollection(){ if(view()!=="home"){ location.hash="#home"; setTimeout(()=>$("#collection")?.scrollIntoView({behavior:"smooth"}),60) } else $("#collection")?.scrollIntoView({behavior:"smooth"}); $("#nav").classList.remove("open") }
+
+/* ---------- views ---------- */
+const F = {cat:"all",q:"",metal:"",price:"",sort:"new",avail:false};
+let slideIdx=0, slideTimer;
+const SLIDES = [
+  {img:"hero_necklace",en:["Haute Joaillerie & Oreficeria d'Epoca","Pezzi d'autore · Collezione privata Milano"],it:["Haute Joaillerie & Oreficeria d'Epoca","Pezzi d'autore · Collezione privata Milano"]},
+  {img:"h204",en:["Coloured stones of the 1960s","Sapphire · Tourmaline · Citrine"],it:["Pietre colorate anni '60","Zaffiro · Tormalina · Citrino"]},
+  {img:"h202",en:["Seen in person, before you buy","48-hour boutique viewing hold"],it:["Visto dal vivo, prima dell'acquisto","Blocco visione in boutique 48 ore"]}
+];
+function viewHome(){
+  return `
+  <section class="wrap hero">
+    <div>
+      <div class="eyebrow">${t("heroEyebrow")}</div>
+      <h1>${t("heroTitle")}</h1>
+      <p class="lead">${t("heroLead")}</p>
+      <div class="ctas">
+        <button class="btn dark" data-go="collection">${t("explore")} <span aria-hidden="true">→</span></button>
+        <a class="btn line" href="#boutique"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>${t("bookViewing")}</a>
+      </div>
+      <div class="stocknote"><i>Nota di Stock:</i>${t("stockNote")}</div>
+    </div>
+    <div class="slider" id="slider">
+      ${SLIDES.map((s,i)=>`<div class="slide ${i===slideIdx?"on":""}"><img src="${IMG(s.img)}" alt="${esc(s[S.lang][0])}" ${i?'loading="lazy"':""}><div class="cap"><b>${s[S.lang][0]}</b><span>${s[S.lang][1]}</span></div></div>`).join("")}
+      <button class="snext sprev" data-s="-1" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg></button>
+      <button class="snext" data-s="1" aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></button>
+      <div class="sdots">${SLIDES.map((s,i)=>`<button data-d="${i}" class="${i===slideIdx?"on":""}" aria-label="Slide ${i+1}"></button>`).join("")}</div>
+    </div>
+  </section>
+  <section class="trust"><div><b>${t("t1")}</b><span>${t("t1s")}</span></div><div><b>${t("t2")}</b><span>${t("t2s")}</span></div><div><b>${t("t3")}</b><span>${t("t3s")}</span></div><div><b>${t("t4")}</b><span>${t("t4s")}</span></div></section>
+  <section class="wrap sec" id="collection">
+    <div class="sechead"><div class="eyebrow">${t("colEyebrow")}</div><h2>${t("colTitle")}</h2><p>${t("colLead")}</p></div>
+    <div class="tabs" id="tabs">${["all",...CATS].map(c=>`<button data-c="${c}" class="${F.cat===c?"on":""}">${t(c)}</button>`).join("")}</div>
+    <div class="filters">
+      <div class="frow">
+        <label class="field"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="fq" placeholder="${t("search")}" value="${esc(F.q)}"></label>
+        <label class="field"><select id="fm"><option value="">${t("allMetals")}</option>${Object.entries(METALS).map(([k,v])=>`<option value="${k}" ${F.metal===k?"selected":""}>${v[S.lang]}</option>`).join("")}</select></label>
+        <label class="field"><select id="fp"><option value="">${t("allPrices")}</option>${["p1","p2","p3","p4"].map(k=>`<option value="${k}" ${F.price===k?"selected":""}>${t(k)}</option>`).join("")}</select></label>
+        <label class="field"><select id="fs">${[["new","sNew"],["low","sLow"],["high","sHigh"]].map(([v,k])=>`<option value="${v}" ${F.sort===v?"selected":""}>${t(k)}</option>`).join("")}</select></label>
+      </div>
+      <div class="avail">${t("availability")} <button class="chip ${!F.avail?"on":""}" data-a="0">${t("allStatuses")}</button><button class="chip ${F.avail?"on":""}" data-a="1">${t("availOnly")}</button><span class="found" id="found"></span></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+  <section class="wrap" style="padding-bottom:72px">
+    <div class="sechead"><div class="eyebrow">${t("howEyebrow")}</div><h2>${t("howTitle")}</h2></div>
+    <div class="steps">${[1,2,3,4].map(i=>`<div><em>0${i}</em><b>${t("h"+i)}</b><p>${t("h"+i+"s")}</p></div>`).join("")}</div>
+  </section>
+  <section style="background:var(--panel);border-block:1px solid var(--line)"><div class="wrap sec split">
+    <img src="${IMG("c1193")}" alt="" loading="lazy">
+    <div><div class="eyebrow">${t("maisonEyebrow")}</div><h2>${t("maisonTitle")}</h2><p>${t("maisonText")}</p><p>${t("maisonText2")}</p><a class="btn line" href="#maison" style="margin-top:12px">${t("readMore")}</a></div>
+  </div></section>
+  <section class="wrap sec split">
+    <div><div class="eyebrow">${t("bEyebrow")}</div><h2>${t("bTitle")}</h2><p>${t("bText")}</p><p><b>Via della Spiga 00, Milano</b> · ${t("hours")}</p><a class="btn dark" href="#boutique" style="margin-top:12px">${t("visit")}</a></div>
+    <img src="${IMG("c2432")}" alt="" loading="lazy" style="aspect-ratio:4/3;object-position:center 40%">
+  </section>`;
+}
+function filtered(){
+  let list = PRODUCTS.filter(p=>{
+    if(F.cat!=="all" && p.cat!==F.cat) return false;
+    if(F.metal && p.metal!==F.metal) return false;
+    if(F.price==="p1" && p.price>=3000) return false;
+    if(F.price==="p2" && (p.price<3000||p.price>7000)) return false;
+    if(F.price==="p3" && (p.price<7000||p.price>15000)) return false;
+    if(F.price==="p4" && p.price<=15000) return false;
+    if(F.avail && st(p.id)!=="available") return false;
+    if(F.q){ const q=F.q.toLowerCase(); const hay=[p.name,p.sku,p.stone.en,p.stone.it,p.era,METALS[p.metal].en,METALS[p.metal].it,t(p.cat),"cert "+p.cert].join(" ").toLowerCase(); if(!hay.includes(q)) return false }
+    return true });
+  list.sort((a,b)=> F.sort==="low"? a.price-b.price : F.sort==="high"? b.price-a.price : a.added-b.added);
+  return list;
+}
+function cardHTML(p){
+  const s=st(p.id);
+  return `<a class="card ${s==="sold"?"sold":""}" href="#product-${p.id}">
+    <div class="ph"><img src="${IMG(p.img)}" alt="${esc(p.name)}" loading="lazy"><span class="badge-cert"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>CERT #${p.cert}</span>${statusPill(s)}</div>
+    <div class="meta"><small>${t(p.cat)} · ${p.era}</small><h3>${esc(p.name)}</h3><div class="spec">${METALS[p.metal][S.lang]}${p.stone.en!=="—"?" · "+esc(p.stone[S.lang]):""}</div><div class="price num">${eur(p.price)}</div></div></a>`;
+}
+function renderGrid(){
+  const list=filtered();
+  $("#grid").innerHTML = list.length? list.map(cardHTML).join("") : `<div class="empty">${t("noResults")}</div>`;
+  $("#found").textContent = list.length+" "+t("found");
+}
+function bindHome(){
+  $("#tabs").onclick=e=>{const c=e.target.dataset.c; if(!c) return; F.cat=c; document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.c===c)); renderGrid()};
+  $("#fq").oninput=e=>{F.q=e.target.value; renderGrid()};
+  $("#fm").onchange=e=>{F.metal=e.target.value; renderGrid()};
+  $("#fp").onchange=e=>{F.price=e.target.value; renderGrid()};
+  $("#fs").onchange=e=>{F.sort=e.target.value; renderGrid()};
+  document.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{F.avail=b.dataset.a==="1"; document.querySelectorAll("[data-a]").forEach(x=>x.classList.toggle("on",x===b)); renderGrid()});
+  const sl=$("#slider");
+  const show=i=>{ slideIdx=(i+SLIDES.length)%SLIDES.length; sl.querySelectorAll(".slide").forEach((s,j)=>s.classList.toggle("on",j===slideIdx)); sl.querySelectorAll(".sdots button").forEach((s,j)=>s.classList.toggle("on",j===slideIdx)) };
+  sl.onclick=e=>{const b=e.target.closest("[data-s],[data-d]"); if(!b) return; if(b.dataset.s) show(slideIdx+ +b.dataset.s); else show(+b.dataset.d); restart()};
+  const restart=()=>{ clearInterval(slideTimer); if(!matchMedia("(prefers-reduced-motion: reduce)").matches) slideTimer=setInterval(()=>show(slideIdx+1),6000) };
+  restart();
+  renderGrid();
+}
+
+/* product */
+let galIdx=0;
+function certDoc(p){
+  return `<div class="certdoc"><h3>${t("certTitle")}</h3><div class="sub">Giallo Oro Gioielli · Laboratorio gemmologico · N. GO-${p.cert}/2026</div>
+  <dl><dt>${t("sku")}</dt><dd>${p.sku}</dd><dt>Item</dt><dd>${esc(p.name)}</dd><dt>${t("metal")}</dt><dd>${METALS[p.metal][S.lang]}</dd><dt>${t("stone")}</dt><dd>${esc(p.stone[S.lang])}</dd><dt>${t("carat")}</dt><dd>${p.carat}</dd><dt>${t("weight")}</dt><dd>${p.weight} g</dd><dt>${t("era")}</dt><dd>${p.era}</dd><dt>${t("condition")}</dt><dd>${p.cond}</dd></dl>
+  <div class="sign"><div><i>E. Bellandi</i><div style="font-size:11px;color:var(--muted);margin-top:4px">Gemmologo diplomato · Milano</div></div><div class="seal">GO<br>${p.cert}</div></div></div>`;
+}
+function stageHTML(p){
+  if(galIdx===2) return `<div class="stage cert">${certDoc(p)}</div>`;
+  return `<div class="stage" id="stage"><img src="${IMG(p.img)}" alt="${esc(p.name)}" style="${galIdx===1?"transform:scale(2);transform-origin:55% 45%":""}"><span class="hint"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v6M8 11h6"/></svg>${t(matchMedia("(hover: none)").matches?"tap":"hover")}</span></div>`;
+}
+function myHold(p){
+  const o=S.orders.find(o=>o.pid===p.id&&o.status==="awaiting"&&o.email===S.user?.email);
+  const r=S.res.find(r=>r.pid===p.id&&r.status==="active"&&r.email===S.user?.email);
+  return o?{kind:"payment",exp:o.expires}:r?{kind:"viewing",exp:r.expires}:null;
+}
+function viewProduct(id){
+  const p=byId(id); if(!p) return viewHome();
+  const s=st(p.id), mine=myHold(p), inBag=S.bag.includes(p.id);
+  const key={available:"stAvailable",viewing:"stViewing",payment:"stPayment",sold:"stSold"}[s];
+  const rel=PRODUCTS.filter(x=>x.cat===p.cat&&x.id!==p.id).slice(0,3);
+  return `<div class="wrap"><div class="crumbs"><a href="#home">${t("home")}</a> / <a href="#home" data-go="collection">${t(p.cat)}</a> / ${esc(p.name)}</div>
+  <section class="pdp">
+    <div class="gal">
+      <div class="thumbs" id="thumbs">
+        <button data-g="0" class="${galIdx===0?"on":""}" aria-label="${t("tFront")}"><img src="${IMG(p.img)}" alt=""></button>
+        <button data-g="1" class="zoomthumb ${galIdx===1?"on":""}" aria-label="${t("tDetail")}"><img src="${IMG(p.img)}" alt=""></button>
+        <button data-g="2" class="certthumb ${galIdx===2?"on":""}" aria-label="${t("tCert")}">CERT<br>#${p.cert}</button>
+      </div>
+      <div id="stagewrap">${stageHTML(p)}</div>
+    </div>
+    <div class="info">
+      <div class="eyebrow">${t(p.cat)} · ${p.era}</div>
+      <h1>${esc(p.name)}</h1>
+      <div class="price num">${eur(p.price)}<small>${t("vat")}</small></div>
+      <div class="statusbox">${statusPill(s)}<div><b>${mine?t("yourHold")+" · <span class='countdown'>"+left(mine.exp)+"</span>":t(key)}</b><p>${mine?fdt(mine.exp):t(key+"T")}</p></div></div>
+      <p class="desc">${esc(p.desc[S.lang])}</p>
+      <div class="buy">
+        <button class="btn dark" id="addbag" ${s!=="available"||inBag?"disabled":""}>${inBag?t("inBag"):t("addBag")}</button>
+        <button class="btn line" id="book" ${s!=="available"?"disabled":""}>${t("book48")}</button>
+      </div>
+      <p class="unique">${t("unique")}</p>
+      <table class="attrs"><tbody>
+        <tr><th>${t("sku")}</th><td>${p.sku}</td></tr><tr><th>${t("metal")}</th><td>${METALS[p.metal][S.lang]}</td></tr><tr><th>${t("stone")}</th><td>${esc(p.stone[S.lang])}</td></tr><tr><th>${t("carat")}</th><td>${p.carat}</td></tr><tr><th>${t("era")}</th><td>${p.era}</td></tr><tr><th>${t("size")}</th><td>${p.size}</td></tr><tr><th>${t("weight")}</th><td>${p.weight} g</td></tr><tr><th>${t("condition")}</th><td>${p.cond}</td></tr>
+      </tbody></table>
+      <div class="certcard"><div class="seal">GO<br>${p.cert}</div><div><b>${t("certTitle")} · #${p.cert}</b><span>${t("certSub")}</span></div><button class="btn sm line" id="viewcert">${t("viewCert")}</button></div>
+      <details class="acc" open><summary>${t("accShip")}</summary><p>${t("accShipT")}</p></details>
+      <details class="acc"><summary>${t("accPay")}</summary><p>${t("accPayT")}</p></details>
+      <details class="acc"><summary>${t("accRet")}</summary><p>${t("accRetT")}</p></details>
+    </div>
+  </section>
+  ${rel.length?`<section style="padding-bottom:72px"><div class="sechead" style="text-align:left"><h2 style="font-size:36px">${t("related")}</h2></div><div class="grid">${rel.map(cardHTML).join("")}</div></section>`:""}
+  </div>`;
+}
+function bindProduct(id){
+  const p=byId(id);
+  $("#thumbs").onclick=e=>{const b=e.target.closest("[data-g]"); if(!b) return; galIdx=+b.dataset.g; document.querySelectorAll("#thumbs button").forEach(x=>x.classList.toggle("on",x===b)); $("#stagewrap").innerHTML=stageHTML(p); bindStage()};
+  const bindStage=()=>{ const sg=$("#stage"); if(!sg||galIdx!==0) return; const im=sg.querySelector("img");
+    sg.onmousemove=e=>{const r=sg.getBoundingClientRect(); im.style.transformOrigin=((e.clientX-r.left)/r.width*100)+"% "+((e.clientY-r.top)/r.height*100)+"%"; sg.classList.add("zoom")};
+    sg.onmouseleave=()=>sg.classList.remove("zoom");
+    sg.onclick=()=>openModal(`<div style="background:#111"><img src="${IMG(p.img)}" alt="${esc(p.name)}" style="width:100%;display:block"></div>`,"wide") };
+  bindStage();
+  $("#addbag").onclick=()=>{ if(!S.bag.includes(p.id)) S.bag.push(p.id); save(); render(); toast(t("toastBag")); openBag() };
+  $("#book").onclick=()=>requireLogin(()=>openBooking(p));
+  $("#viewcert").onclick=()=>openModal(`<div style="aspect-ratio:auto">${certDoc(p)}</div>`,"wide");
+}
+
+/* static pages */
+function pageHead(e,ti,l){ return `<section class="wrap pagehead"><div class="eyebrow">${t(e)}</div><h1>${t(ti)}</h1><p>${t(l)}</p></section>` }
+function viewMaison(){ return pageHead("pmEyebrow","pmTitle","pmLead")+`<section class="wrap split" style="padding-bottom:40px"><img src="${IMG("c1183")}" alt=""><div><h2>${t("maisonTitle")}</h2><p>${t("maisonText")}</p><p>${t("maisonText2")}</p></div></section><section class="wrap" style="padding-bottom:72px"><div class="facts"><div><b>${t("pm1")}</b><p>${t("pm1t")}</p></div><div><b>${t("pm2")}</b><p>${t("pm2t")}</p></div><div><b>${t("pm3")}</b><p>${t("pm3t")}</p></div></div></section><section style="background:var(--panel);border-block:1px solid var(--line)"><div class="wrap sec split"><div><div class="eyebrow">${t("colEyebrow")}</div><h2>${t("colTitle")}</h2><p>${t("colLead")}</p><button class="btn dark" data-go="collection">${t("explore")} →</button></div><img src="${IMG("c1191")}" alt=""></div></section>` }
+function viewBoutique(){ return pageHead("pbEyebrow","pbTitle","pbLead")+`<section class="wrap split" style="padding-bottom:56px"><img src="${IMG("c2522")}" alt="Boutique Giallo Oro" style="aspect-ratio:1"><div><div class="eyebrow">${t("bEyebrow")}</div><h2>${t("bTitle")}</h2><p>${t("bText")}</p><div class="bank" style="margin:18px 0"><div><span>${t("address")}</span><b>Via della Spiga 00, 20121 Milano</b></div><div><span>Orari</span><b>${t("hours")}</b></div><div><span>${t("phone")}</span><b>+39 02 0000 0000</b></div></div><button class="btn dark" data-go="collection">${t("explore")} →</button></div></section><section class="wrap" style="padding-bottom:72px"><img src="${IMG("h202")}" alt="" style="width:100%;aspect-ratio:21/8;object-fit:cover;display:block" loading="lazy"></section>` }
+function viewAuth(){ return pageHead("paEyebrow","paTitle","paLead")+`<section class="wrap split" style="padding-bottom:40px"><img src="${IMG("c1186")}" alt=""><div><div class="facts" style="grid-template-columns:1fr;margin-top:0"><div><b>${t("pa1")}</b><p>${t("pa1t")}</p></div><div><b>${t("pa2")}</b><p>${t("pa2t")}</p></div><div><b>${t("pa3")}</b><p>${t("pa3t")}</p></div></div></div></section><section class="wrap" style="padding-bottom:72px;max-width:760px">${certDoc(PRODUCTS[4])}</section>` }
+
+/* account */
+function viewAccount(){
+  if(!S.user) return `<div class="wrap stafflogin"><h2 style="font-size:40px;margin-bottom:12px">${t("myAccount")}</h2><p style="color:var(--muted)">${t("loginLead")}</p><button class="btn dark" id="dologin" style="margin-top:20px">${t("guest")}</button></div>`;
+  const mine=S.orders.filter(o=>o.email===S.user.email).slice().reverse(), rv=S.res.filter(r=>r.email===S.user.email).slice().reverse();
+  const ost={awaiting:"oAwaiting",paid:"oPaid",cancelled:"oCancelled",expired:"oExpired"}, rst={active:"rActive",completed:"rDone",purchased:"rPurchased",expired:"rExpired",cancelled:"rCancelled"};
+  return `<section class="wrap pagehead" style="text-align:left;padding-bottom:28px"><div class="eyebrow">${t("myAccount")}</div><h1>${esc(S.user.name)}</h1></section>
+  <div class="wrap acgrid"><aside class="box" style="align-self:start"><h3>${esc(S.user.name)}</h3><p style="margin:0;color:var(--muted);font-size:14px">${esc(S.user.email)}<br>${esc(S.user.phone||"")}</p></aside>
+  <div style="display:grid;gap:28px;min-width:0">
+    <div class="box"><h3>${t("myOrders")}</h3>${mine.length?mine.map(o=>{const p=byId(o.pid);return `<div class="rec"><img src="${IMG(p.img)}" alt=""><div><b>${esc(p.name)}</b><small>${o.ref} · ${fdt(o.created)} · ${eur(o.total)}</small>${o.status==="awaiting"?`<small class="countdown" style="color:var(--hold)">${t("expires")}: ${left(o.expires)}</small>`:""}</div><span class="status ${o.status==="paid"?"s-available":o.status==="awaiting"?"s-payment":"s-sold"}">${t(ost[o.status])}</span></div>${o.status==="awaiting"?bankBox(o):""}`}).join(""):`<p style="color:var(--muted)">${t("noOrders")}</p>`}</div>
+    <div class="box"><h3>${t("myViewings")}</h3>${rv.length?rv.map(r=>{const p=byId(r.pid);return `<div class="rec"><img src="${IMG(p.img)}" alt=""><div><b>${esc(p.name)}</b><small>${fdt(r.created)}</small>${r.status==="active"?`<small class="countdown" style="color:var(--view)">${t("expires")}: ${left(r.expires)}</small>`:""}</div><div style="display:grid;gap:8px;justify-items:end"><span class="status ${r.status==="active"?"s-viewing":r.status==="purchased"?"s-available":"s-sold"}">${t(rst[r.status])}</span>${r.status==="active"?`<button class="btn sm warn" data-cancelres="${r.id}">${t("cancelRes")}</button>`:""}</div></div>`}).join(""):`<p style="color:var(--muted)">${t("noViewings")}</p>`}</div>
+  </div></div>`;
+}
+function bankBox(o){ return `<div class="bank" style="margin:4px 0 12px"><div><span>${t("beneficiary")}</span><b>Giallo Oro Gioielli S.r.l.</b></div><div><span>${t("iban")}</span><b>IT00 X000 0000 0000 0000 0000 000</b></div><div><span>${t("bic")}</span><b>DEMOITMMXXX</b></div><div><span>${t("reference")}</span><b>${o.ref}</b></div><div><span>${t("amount")}</span><b>${eur(o.total)}</b></div></div>` }
+function bindAccount(){
+  $("#dologin")&&($("#dologin").onclick=()=>openLogin(()=>render()));
+  document.querySelectorAll("[data-cancelres]").forEach(b=>b.onclick=()=>{ const r=S.res.find(x=>x.id===b.dataset.cancelres); r.status="cancelled"; if(st(r.pid)==="viewing") delete S.status[r.pid]; rawlog("Viewing cancelled by customer: "+byId(r.pid).name,"Visione annullata dal cliente: "+byId(r.pid).name); notify("staff","nViewDone",{item:byId(r.pid).name}); save(); render(); toast(t("toastRel")) });
+}
+
+/* staff */
+let sTab="inv", sFilter="all", sQ="", confirmFor=null;
+function viewStaff(){
+  if(!(S.role==="staff"&&S.staffIn)) return `<div class="wrap stafflogin"><div class="eyebrow">${t("signInStaffFirst")}</div><h2 style="font-size:44px;margin:12px 0">${t("staffTitle")}</h2><p style="color:var(--muted);margin-bottom:24px">${t("staffLead")}</p><div class="box fgrid"><label>${t("email")}<input id="se" value="marco@gialloorogioielli.it"></label><button class="btn dark" id="staffin">${t("staffSign")}</button></div></div>`;
+  const cnt=s=>PRODUCTS.filter(p=>st(p.id)===s).length;
+  const ordersOpen=S.orders.filter(o=>o.status==="awaiting"), resOpen=S.res.filter(r=>r.status==="active");
+  let body="";
+  if(sTab==="inv"){
+    const list=PRODUCTS.filter(p=>(sFilter==="all"||st(p.id)===sFilter)&&(!sQ||(p.name+" "+p.sku+" "+p.cert).toLowerCase().includes(sQ.toLowerCase())));
+    body=`<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center">${["all","available","viewing","payment","sold"].map(s=>`<button class="chip ${sFilter===s?"on":""}" data-sf="${s}">${s==="all"?t("filterAll"):t(s)}</button>`).join("")}<label class="field" style="height:38px;flex:1;min-width:200px"><input id="sq" placeholder="${t("searchInv")}" value="${esc(sQ)}"></label></div>
+    <div class="inv">${list.map(p=>{const s=st(p.id);const o=S.orders.find(o=>o.pid===p.id&&o.status==="awaiting");const r=S.res.find(r=>r.pid===p.id&&r.status==="active");
+      let acts="";
+      if(s==="available") acts=`<button class="btn sm dark" data-sold="${p.id}">${t("markSold")}</button>`;
+      if(s==="payment"&&o) acts=`<button class="btn sm ok" data-pay="${o.id}">${t("confirmPay")}</button><button class="btn sm warn" data-cancelo="${o.id}">${t("cancelOrder")}</button>`;
+      if(s==="viewing"&&r) acts=`<button class="btn sm ok" data-vsold="${r.id}">${t("soldAtViewing")}</button><button class="btn sm line" data-vrel="${r.id}">${t("release")}</button>`;
+      if(s==="sold") acts=`<button class="btn sm line" data-relist="${p.id}">${t("relist")}</button>`;
+      return `<div class="irow"><img src="${IMG(p.img)}" alt=""><div style="min-width:0"><b>${esc(p.name)}</b><small>${p.sku} · CERT #${p.cert}</small></div><div class="c3 num">${eur(p.price)}</div><div class="c4">${statusPill(s)}${o?`<small class="countdown">${t("expires")}: ${left(o.expires)}</small>`:r?`<small class="countdown">${t("expires")}: ${left(r.expires)}</small>`:""}</div><div class="acts">${acts}</div>${confirmFor===p.id?`<div class="confirm">${t("confirmSoldQ")}<button class="btn sm dark" data-yes="${p.id}">${t("yes")}</button><button class="btn sm line" data-no>${t("no")}</button></div>`:""}</div>`}).join("")}</div>`;
+  } else if(sTab==="orders"){
+    const all=S.orders.slice().reverse();
+    body=`<div class="inv">${all.map(o=>{const p=byId(o.pid);return `<div class="irow"><img src="${IMG(p.img)}" alt=""><div style="min-width:0"><b>${o.ref} · ${esc(p.name)}</b><small>${t("customer")}: ${esc(o.customer)} · ${esc(o.email)}</small><small>${o.delivery==="pickup"?t("dPickup"):t("dCourier")}</small></div><div class="c3 num"><b>${eur(o.total)}</b><small>${t("placed")}: ${fdt(o.created)}</small></div><div class="c4">${o.status==="awaiting"?`<span class="status s-payment">${t("oAwaiting")}</span><small class="countdown">${left(o.expires)}</small>`:`<span class="status ${o.status==="paid"?"s-available":"s-sold"}">${t({paid:"oPaid",cancelled:"oCancelled",expired:"oExpired"}[o.status])}</span>`}</div><div class="acts">${o.status==="awaiting"?`<button class="btn sm ok" data-pay="${o.id}">${t("confirmPay")}</button><button class="btn sm warn" data-cancelo="${o.id}">${t("cancelOrder")}</button>`:""}</div></div>`}).join("")}</div>`;
+  } else if(sTab==="views"){
+    const all=S.res.slice().reverse();
+    body=`<div class="inv">${all.map(r=>{const p=byId(r.pid);return `<div class="irow"><img src="${IMG(p.img)}" alt=""><div style="min-width:0"><b>${esc(p.name)}</b><small>${esc(r.customer)} · ${esc(r.phone||r.email)}</small>${r.note?`<small>“${esc(r.note)}”</small>`:""}</div><div class="c3"><small>${t("placed")}: ${fdt(r.created)}</small></div><div class="c4">${r.status==="active"?`<span class="status s-viewing">${t("rActive")}</span><small class="countdown">${left(r.expires)}</small>`:`<span class="status s-sold">${t({completed:"rDone",purchased:"rPurchased",expired:"rExpired",cancelled:"rCancelled"}[r.status])}</span>`}</div><div class="acts">${r.status==="active"?`<button class="btn sm ok" data-vsold="${r.id}">${t("soldAtViewing")}</button><button class="btn sm line" data-vrel="${r.id}">${t("release")}</button>`:""}</div></div>`}).join("")}</div>`;
+  } else {
+    body=`<div class="box log" style="margin-bottom:70px">${S.log.slice().reverse().map(l=>`<div><span>${fdt(l.t)}</span>${esc(l.text[S.lang])}</div>`).join("")}</div>`;
+  }
+  return `<div class="staffbar"><div class="wrap"><b>${t("staffTitle")}</b><span>${t("staffUser")}</span><span class="sp"></span><span>${t("perHold")}</span><button id="sim">${t("sim")}</button><button id="reset">${t("reset")}</button><button id="exitstaff">${t("exitStaff")}</button></div></div>
+  <div class="wrap"><div class="kpis"><div class="kpi c-ok"><span>${t("kAvail")}</span><b class="num">${cnt("available")}</b></div><div class="kpi c-view"><span>${t("kView")}</span><b class="num">${cnt("viewing")}</b></div><div class="kpi c-hold"><span>${t("kPay")}</span><b class="num">${cnt("payment")}</b></div><div class="kpi c-sold"><span>${t("kSold")}</span><b class="num">${cnt("sold")}</b></div></div>
+  <div class="stabs"><button data-st="inv" class="${sTab==="inv"?"on":""}">${t("inv")}</button><button data-st="orders" class="${sTab==="orders"?"on":""}">${t("orders")}${ordersOpen.length?`<span class="n">${ordersOpen.length}</span>`:""}</button><button data-st="views" class="${sTab==="views"?"on":""}">${t("viewings")}${resOpen.length?`<span class="n">${resOpen.length}</span>`:""}</button><button data-st="log" class="${sTab==="log"?"on":""}">${t("activity")}</button></div>
+  ${body}</div>`;
+}
+function bindStaff(){
+  if($("#staffin")){ $("#staffin").onclick=()=>{ S.role="staff"; S.staffIn=true; save(); render(); toast(t("toastIn")) }; return }
+  const on=(sel,fn)=>document.querySelectorAll(sel).forEach(b=>b.onclick=()=>fn(b));
+  on("[data-st]",b=>{sTab=b.dataset.st; confirmFor=null; render()});
+  on("[data-sf]",b=>{sFilter=b.dataset.sf; render()});
+  $("#sq")&&($("#sq").oninput=e=>{sQ=e.target.value; const pos=e.target.selectionStart; render(); const el=$("#sq"); el.focus(); el.setSelectionRange(pos,pos)});
+  on("[data-sold]",b=>{confirmFor=+b.dataset.sold; render()});
+  on("[data-no]",()=>{confirmFor=null; render()});
+  on("[data-yes]",b=>{ const id=+b.dataset.yes; if(st(id)!=="available"){ toast(t("holdWarn")); confirmFor=null; render(); return } S.status[id]="sold"; S.bag=S.bag.filter(x=>x!==id); rawlog(byId(id).name+" marked as sold in boutique",byId(id).name+" segnato venduto in boutique"); confirmFor=null; save(); render(); toast(t("toastSold")) });
+  on("[data-pay]",b=>{ const o=S.orders.find(x=>x.id===b.dataset.pay); o.status="paid"; S.status[o.pid]="sold"; const p=byId(o.pid); notify(o.email===S.user?.email?"customer":"staff","nPaid",{ref:o.ref,item:p.name}); rawlog("Payment confirmed for "+o.ref+" ("+p.name+")","Pagamento confermato per "+o.ref+" ("+p.name+")"); save(); render(); toast(t("toastPaid")) });
+  on("[data-cancelo]",b=>{ const o=S.orders.find(x=>x.id===b.dataset.cancelo); o.status="cancelled"; delete S.status[o.pid]; rawlog("Order "+o.ref+" cancelled","Ordine "+o.ref+" annullato"); save(); render(); toast(t("toastCancel")) });
+  on("[data-vsold]",b=>{ const r=S.res.find(x=>x.id===b.dataset.vsold); r.status="purchased"; S.status[r.pid]="sold"; rawlog(byId(r.pid).name+" sold at viewing to "+r.customer,byId(r.pid).name+" venduto alla visione a "+r.customer); if(r.email===S.user?.email) notify("customer","nViewDone",{item:byId(r.pid).name}); save(); render(); toast(t("toastSold")) });
+  on("[data-vrel]",b=>{ const r=S.res.find(x=>x.id===b.dataset.vrel); r.status="completed"; delete S.status[r.pid]; rawlog("Viewing hold released: "+byId(r.pid).name,"Visione rilasciata: "+byId(r.pid).name); if(r.email===S.user?.email) notify("customer","nViewDone",{item:byId(r.pid).name}); save(); render(); toast(t("toastRel")) });
+  on("[data-relist]",b=>{ const id=+b.dataset.relist; delete S.status[id]; rawlog(byId(id).name+" returned to the collection",byId(id).name+" rimesso in vendita"); save(); render(); toast(t("toastRel")) });
+  $("#sim").onclick=()=>{ S.offset+=24*H; sweep(); save(); render(); toast(t("simT")) };
+  $("#reset").onclick=()=>{ const l=S.lang; S=seed(); S.lang=l; S.role="staff"; S.staffIn=true; save(); render(); toast(t("toastReset")) };
+  $("#exitstaff").onclick=()=>{ S.role="customer"; S.staffIn=false; save(); location.hash="#home" };
+}
+
+/* ---------- overlays ---------- */
+function closeLayer(){ $("#layer").innerHTML=""; document.body.style.overflow="" }
+function openModal(html,cls=""){
+  $("#layer").innerHTML=`<div class="scrim center" id="scrim"><div class="modal ${cls}" role="dialog" aria-modal="true"><button class="close" id="mclose" aria-label="Close">×</button>${html}</div></div>`;
+  document.body.style.overflow="hidden";
+  $("#scrim").onclick=e=>{ if(e.target.id==="scrim") closeLayer() }; $("#mclose").onclick=closeLayer;
+}
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeLayer() });
+function requireLogin(fn){ if(S.user) fn(); else openLogin(fn) }
+function openLogin(after){
+  openModal(`<form class="mbody" id="lf"><div class="eyebrow">${t("myAccount")}</div><h3>${t("loginTitle")}</h3><p>${t("loginLead")}</p><div class="fgrid"><label>${t("name")}<input id="ln" value="Giulia Rossi" required></label><label>${t("email")}<input id="le" type="email" value="giulia.rossi@example.it" required></label><label>${t("password")}<input id="lp" type="password" value="demo-demo" required></label></div><p class="notice">${t("demoFill")}</p><button class="btn dark" type="submit">${t("continue")}</button></form>`);
+  $("#lf").onsubmit=e=>{ e.preventDefault(); S.user={name:$("#ln").value.trim()||"Giulia Rossi",email:$("#le").value.trim(),phone:"+39 333 000 0000"}; S.role="customer"; save(); closeLayer(); render(); toast(t("toastIn")); after&&after() };
+}
+function openBooking(p){
+  if(st(p.id)!=="available"){ render(); return }
+  openModal(`<form class="mbody" id="bf"><div class="eyebrow">${t("bEyebrow")}</div><h3>${t("bookTitle")}</h3>
+    <div class="line-item"><img src="${IMG(p.img)}" alt=""><div><b>${esc(p.name)}</b><small>${p.sku} · ${eur(p.price)}</small></div></div>
+    <p>${t("bookLead")}</p>
+    <div class="fgrid"><label>${t("phone")}<input id="bp" value="${esc(S.user.phone||"")}"></label><label>${t("note")}<textarea id="bn" rows="2"></textarea></label></div>
+    <div class="bank"><div><span>${t("address")}</span><b>Via della Spiga 00, Milano</b></div><div><span>${t("expires")}</span><b>${fdt(now()+48*H)}</b></div></div>
+    <button class="btn dark" type="submit">${t("confirmBook")}</button></form>`);
+  $("#bf").onsubmit=e=>{ e.preventDefault(); if(st(p.id)!=="available"){ closeLayer(); render(); return }
+    const r={id:"r"+(++S.seq),pid:p.id,customer:S.user.name,email:S.user.email,phone:$("#bp").value,note:$("#bn").value,created:now(),expires:now()+48*H,status:"active"};
+    S.res.push(r); S.status[p.id]="viewing"; S.bag=S.bag.filter(x=>x!==p.id);
+    notify("staff","nViewStaff",{item:p.name,name:S.user.name}); rawlog("Viewing reserved by "+S.user.name+" ("+p.name+")","Visione riservata da "+S.user.name+" ("+p.name+")"); save();
+    openModal(`<div class="mbody"><div class="eyebrow">${t("bEyebrow")}</div><h3>${t("bookedTitle")}</h3><div class="line-item"><img src="${IMG(p.img)}" alt=""><div><b>${esc(p.name)}</b><small>${p.sku}</small></div></div><p>${t("bookedT")} <b style="color:var(--ink)">${fdt(r.expires)}</b>.</p><div class="bank"><div><span>${t("address")}</span><b>Via della Spiga 00, Milano</b></div><div><span>Orari</span><b>${t("hours")}</b></div></div><div class="buy"><button class="btn dark" id="ok1">${t("done")}</button><a class="btn line" href="#account" id="ok2">${t("toAccount")}</a></div></div>`);
+    $("#ok1").onclick=closeLayer; $("#ok2").onclick=closeLayer; render(); toast(t("toastBooked")) };
+}
+let deliv="courier";
+function openBag(){
+  const items=S.bag.map(byId).filter(Boolean);
+  const okItems=items.filter(p=>st(p.id)==="available");
+  const sub=okItems.reduce((a,p)=>a+p.price,0), ship=okItems.length&&deliv==="courier"?30:0;
+  $("#layer").innerHTML=`<div class="scrim" id="scrim"><aside class="drawer" role="dialog" aria-modal="true"><div class="dhead"><h3>${t("bagTitle")}</h3><button class="iconbtn" id="dclose" aria-label="Close" style="font-size:24px">×</button></div>
+  <div class="dbody">${items.length?items.map(p=>{const ok=st(p.id)==="available";return `<div class="line-item" style="${ok?"":"opacity:.55"}"><img src="${IMG(p.img)}" alt=""><div><b>${esc(p.name)}</b><small>${p.sku} · CERT #${p.cert}</small>${ok?"":`<small style="color:var(--sold);display:block">${t("unavailableNow")}</small>`}<button class="btn sm" style="border:0;padding:6px 0;color:var(--muted)" data-rm="${p.id}">${t("remove")}</button></div><span class="num" style="font-weight:600">${eur(p.price)}</span></div>`}).join("")+
+  `<div><div class="eyebrow" style="margin-bottom:10px">${t("delivery")}</div><div style="display:grid;gap:10px"><label class="opt"><input type="radio" name="dl" value="courier" ${deliv==="courier"?"checked":""}><span>${t("dCourier")}<small>${t("dCourierS")}</small></span><b class="num">${eur(30)}</b></label><label class="opt"><input type="radio" name="dl" value="pickup" ${deliv==="pickup"?"checked":""}><span>${t("dPickup")}<small>${t("dPickupS")}</small></span><b>${t("free")}</b></label></div></div><p class="notice">${t("payNote")}</p>`:`<p style="color:var(--muted)">${t("bagEmpty")}</p>`}</div>
+  ${items.length?`<div class="dfoot"><div class="tot"><span>${t("subtotal")}</span><span class="num">${eur(sub)}</span></div><div class="tot"><span>${t("shipping")}</span><span class="num">${ship?eur(ship):t("free")}</span></div><div class="tot big"><span>${t("total")}</span><span class="num">${eur(sub+ship)}</span></div><button class="btn dark" id="place" ${okItems.length?"":"disabled"}>${t("placeOrder")}</button></div>`:""}</aside></div>`;
+  document.body.style.overflow="hidden";
+  $("#scrim").onclick=e=>{ if(e.target.id==="scrim") closeLayer() }; $("#dclose").onclick=closeLayer;
+  document.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{ S.bag=S.bag.filter(x=>x!==+b.dataset.rm); save(); renderHeader(view()); openBag() });
+  document.querySelectorAll("[name=dl]").forEach(r=>r.onchange=()=>{ deliv=r.value; openBag() });
+  $("#place")&&($("#place").onclick=()=>requireLogin(placeOrder));
+}
+function placeOrder(){
+  const okItems=S.bag.map(byId).filter(p=>p&&st(p.id)==="available");
+  if(!okItems.length){ openBag(); return }
+  const ship=deliv==="courier"?30:0, created=now(), exp=created+72*H;
+  const made=okItems.map((p,i)=>{ const o={id:"o"+(++S.seq),ref:"GO-2026-0"+S.seq,pid:p.id,customer:S.user.name,email:S.user.email,delivery:deliv,total:p.price+(i===0?ship:0),created,expires:exp,status:"awaiting"}; S.orders.push(o); S.status[p.id]="payment"; notify("staff","nOrderStaff",{ref:o.ref,item:p.name}); rawlog("Order "+o.ref+" placed by "+S.user.name,"Ordine "+o.ref+" creato da "+S.user.name); return o });
+  S.bag=[]; save(); render();
+  const tot=made.reduce((a,o)=>a+o.total,0), ref=made.map(o=>o.ref).join(", ");
+  openModal(`<div class="mbody"><div class="eyebrow">${t("accPay")}</div><h3>${t("orderPlaced")}</h3><p>${t("orderPlacedT")} <b style="color:var(--ink)">${fdt(exp)}</b> (72 h).</p>
+    ${made.map(o=>`<div class="line-item"><img src="${IMG(byId(o.pid).img)}" alt=""><div><b>${esc(byId(o.pid).name)}</b><small>${o.ref}</small></div><span class="num">${eur(o.total)}</span></div>`).join("")}
+    <div class="bank"><div><span>${t("beneficiary")}</span><b>Giallo Oro Gioielli S.r.l.</b></div><div><span>${t("iban")}</span><b id="ibantxt">IT00 X000 0000 0000 0000 0000 000</b></div><div><span>${t("bic")}</span><b>DEMOITMMXXX</b></div><div><span>${t("reference")}</span><b>${ref}</b></div><div><span>${t("amount")}</span><b>${eur(tot)}</b></div></div>
+    <div class="buy"><button class="btn line" id="cpy">${t("copy")} IBAN</button><a class="btn dark" href="#account" id="toacc">${t("toAccount")}</a></div></div>`);
+  $("#toacc").onclick=closeLayer;
+  $("#cpy").onclick=()=>{ const v=$("#ibantxt").textContent; const done=()=>{$("#cpy").textContent=t("copied")}; try{ navigator.clipboard.writeText(v).then(done,()=>{selectText($("#ibantxt"));done()}) }catch(e){ selectText($("#ibantxt")); done() } };
+  toast(t("toastOrder"));
+}
+function selectText(el){ const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r) }
+
+/* ---------- router ---------- */
+function view(){ const h=location.hash.slice(1)||"home"; if(h.startsWith("product-")) return "product"; return ["home","maison","boutique","authenticity","staff","account"].includes(h)?h:"home" }
+let lastHash=null;
+function render(){
+  sweep();
+  const v=view(), h=location.hash.slice(1);
+  clearInterval(slideTimer);
+  const app=$("#app");
+  if(v==="product"){ const id=+h.split("-")[1]; if(h!==lastHash) galIdx=0; app.innerHTML=viewProduct(id); bindProduct(id) }
+  else if(v==="maison") app.innerHTML=viewMaison();
+  else if(v==="boutique") app.innerHTML=viewBoutique();
+  else if(v==="authenticity") app.innerHTML=viewAuth();
+  else if(v==="staff"){ app.innerHTML=viewStaff(); bindStaff() }
+  else if(v==="account"){ app.innerHTML=viewAccount(); bindAccount() }
+  else { app.innerHTML=viewHome(); bindHome() }
+  renderHeader(v);
+  if(h!==lastHash){ if(lastHash!==null) window.scrollTo(0,0); lastHash=h }
+}
+addEventListener("hashchange",()=>{ closeLayer(); $("#nav").classList.remove("open"); render() });
+setInterval(()=>{ document.querySelectorAll(".countdown").length && !$("#layer").innerHTML && !document.activeElement?.matches("input,textarea,select") && render() },30000);
+render();
+})();
+</script>
+
+</body>
+</html>
